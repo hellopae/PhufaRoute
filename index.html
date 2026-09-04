@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ภูฟ้า — แผนส่งสิ่งพิมพ์ 2569</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  /* ---- DESIGN.md §2 tokens ---- */
+  --background:#F7F5F0;            --foreground:#1B1C20;
+  --card:#FFFFFF;                  --card-foreground:#1B1C20;
+  --muted:#ECE8E0;                 --muted-foreground:#5A554B;
+  --secondary:#E6E2D8;             --secondary-foreground:#26241F;
+  --accent:#F0EADE;                --accent-foreground:#3A3227;
+  --primary:#8E2F2A;               --primary-foreground:#FDF6F3;
+  --gold:#7A5E33;                  --gold-foreground:#FFFCF5;
+  --success:#2C6446;               --success-foreground:#F4FBF7;
+  --warning:#8A5A12;               --warning-foreground:#FFFAF0;
+  --destructive:#A81F16;           --destructive-foreground:#FFF5F4;
+  --border:#DFDACE;
+  --input:#8A8376;
+  --ring:#8E2F2A;
+
+  /* ---- project tokens: สีประจำวันส่ง ---- */
+  --d1:#B4522E; --d1-fg:#FFF6F1;
+  --d2:#2F6B8F; --d2-fg:#F2F9FD;
+  --d3:#6A4E9C; --d3-fg:#F8F4FF;
+  --d4:#2C6446; --d4-fg:#F4FBF7;
+  --d5:#8A5A12; --d5-fg:#FFFAF0;
+
+  --radius:0.75rem;
+  --radius-sm:calc(var(--radius) * 0.5);
+  --radius-md:calc(var(--radius) * 0.75);
+  --radius-lg:var(--radius);
+  --radius-full:999px;
+
+  --shadow-sm:0 1px 2px rgba(27,28,32,.05), 0 2px 8px -4px rgba(27,28,32,.10);
+  --shadow-md:0 1px 2px rgba(27,28,32,.05), 0 8px 24px -12px rgba(27,28,32,.18);
+
+  --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem;
+  --space-5:1.5rem; --space-6:2rem; --space-7:3rem;
+
+  --font-sans:"Space Grotesk","Noto Sans Thai",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --text-xs:.8125rem; --text-sm:.9375rem; --text-base:1rem; --text-lg:1.125rem;
+  --text-xl:1.375rem;
+  --text-2xl:clamp(1.5rem,1.2rem + 1.5vw,2rem);
+  --text-3xl:clamp(1.6rem,1.35rem + 1.6vw,2.25rem);
+
+  --leading-tight:1.3; --leading-ui:1.5; --leading-body:1.75;
+  --container:1180px;
+  --tap:44px;
+  --duration:160ms; --ease:cubic-bezier(.2,.6,.3,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --background:#14151A;          --foreground:#EDEAE3;
+    --card:#1C1E25;                --card-foreground:#EDEAE3;
+    --muted:#262932;               --muted-foreground:#A8A49B;
+    --secondary:#2A2D37;           --secondary-foreground:#EDEAE3;
+    --accent:#2E313B;              --accent-foreground:#EDEAE3;
+    --primary:#E0756A;             --primary-foreground:#2A0F0C;
+    --gold:#D9B573;                --gold-foreground:#2A1F0C;
+    --success:#6FCB9A;             --success-foreground:#08251A;
+    --warning:#E5B25C;             --warning-foreground:#2B1D06;
+    --destructive:#F0756B;         --destructive-foreground:#2A0C08;
+    --border:#333744; --input:#6A7080; --ring:#E0756A;
+    --d1:#E08A63; --d1-fg:#2A1008;
+    --d2:#7BB6DA; --d2-fg:#08202E;
+    --d3:#B49AE0; --d3-fg:#1A0F2E;
+    --d4:#6FCB9A; --d4-fg:#08251A;
+    --d5:#E5B25C; --d5-fg:#2B1D06;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.40), 0 2px 8px -4px rgba(0,0,0,.55);
+    --shadow-md:0 1px 2px rgba(0,0,0,.45), 0 8px 24px -12px rgba(0,0,0,.65);
+  }
+}
+:root[data-theme="dark"]{
+  --background:#14151A;          --foreground:#EDEAE3;
+  --card:#1C1E25;                --card-foreground:#EDEAE3;
+  --muted:#262932;               --muted-foreground:#A8A49B;
+  --secondary:#2A2D37;           --secondary-foreground:#EDEAE3;
+  --accent:#2E313B;              --accent-foreground:#EDEAE3;
+  --primary:#E0756A;             --primary-foreground:#2A0F0C;
+  --gold:#D9B573;                --gold-foreground:#2A1F0C;
+  --success:#6FCB9A;             --success-foreground:#08251A;
+  --warning:#E5B25C;             --warning-foreground:#2B1D06;
+  --destructive:#F0756B;         --destructive-foreground:#2A0C08;
+  --border:#333744; --input:#6A7080; --ring:#E0756A;
+  --d1:#E08A63; --d1-fg:#2A1008;
+  --d2:#7BB6DA; --d2-fg:#08202E;
+  --d3:#B49AE0; --d3-fg:#1A0F2E;
+  --d4:#6FCB9A; --d4-fg:#08251A;
+  --d5:#E5B25C; --d5-fg:#2B1D06;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.40), 0 2px 8px -4px rgba(0,0,0,.55);
+  --shadow-md:0 1px 2px rgba(0,0,0,.45), 0 8px 24px -12px rgba(0,0,0,.65);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+body{
+  font-family:var(--font-sans);font-size:var(--text-base);line-height:var(--leading-body);
+  letter-spacing:0;background:var(--background);color:var(--foreground);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;padding-bottom:var(--space-7);
+}
+h1,h2,h3,h4{font-weight:600;line-height:var(--leading-tight);text-wrap:balance;color:var(--foreground)}
+h1{font-size:var(--text-xl)} h2{font-size:var(--text-2xl)} h3{font-size:var(--text-lg)}
+a{color:var(--primary);text-underline-offset:.2em}
+a:hover{text-decoration:underline}
+.mono{font-family:var(--font-mono)}
+.meta{font-size:var(--text-xs);color:var(--muted-foreground);line-height:var(--leading-ui)}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--ring);outline-offset:2px;border-radius:var(--radius-sm)}
+.wrap{max-width:var(--container);margin:0 auto;padding:0 var(--space-4)}
+@media(min-width:768px){.wrap{padding:0 var(--space-5)}}
+
+/* ---------- header ---------- */
+header{border-bottom:1px solid var(--border);background:var(--card)}
+.head-inner{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-4) 0;flex-wrap:wrap}
+.brand{display:flex;gap:var(--space-3);align-items:center}
+.mark{width:44px;height:44px;border-radius:var(--radius-md);background:var(--primary);color:var(--primary-foreground);
+  display:grid;place-items:center;font-weight:700;font-size:var(--text-lg);flex:none}
+.kicker{font-size:11px;letter-spacing:.18em;color:var(--muted-foreground);text-transform:uppercase;line-height:var(--leading-ui)}
+.back{font-size:var(--text-sm);color:var(--gold);text-decoration:none;white-space:nowrap}
+.back:hover{text-decoration:underline}
+
+/* ---------- tabs ---------- */
+.tabs{border-bottom:1px solid var(--border);background:var(--card);overflow-x:auto;position:sticky;top:0;z-index:600}
+.tabs .wrap{display:flex}
+.tab{appearance:none;border:none;background:none;cursor:pointer;white-space:nowrap;font-family:inherit;
+  font-size:var(--text-sm);font-weight:600;color:var(--muted-foreground);min-height:var(--tap);
+  padding:var(--space-3) var(--space-4);border-bottom:2px solid transparent}
+.tab[aria-selected="true"]{color:var(--foreground);border-bottom-color:var(--primary)}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-3);margin:var(--space-5) 0}
+@media(min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--card);color:var(--card-foreground);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:var(--space-4);box-shadow:var(--shadow-sm)}
+.stat b{display:block;font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:600;line-height:1.15}
+.stat span{font-size:var(--text-xs);color:var(--muted-foreground);line-height:var(--leading-ui)}
+
+/* ---------- notice ---------- */
+.notice{background:var(--accent);color:var(--accent-foreground);border:1px solid var(--border);
+  border-left:4px solid var(--warning);border-radius:var(--radius-md);
+  padding:var(--space-4);font-size:var(--text-sm);line-height:var(--leading-body);margin-bottom:var(--space-5)}
+.notice strong{font-weight:600}
+
+/* ---------- day card ---------- */
+.day{background:var(--card);color:var(--card-foreground);border:1px solid var(--border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);margin-bottom:var(--space-5);overflow:hidden}
+.day-head{display:flex;gap:var(--space-4);align-items:flex-start;padding:var(--space-4);
+  border-bottom:1px solid var(--border);flex-wrap:wrap}
+.chip{flex:none;min-width:64px;text-align:center;border-radius:var(--radius-md);
+  padding:var(--space-2) var(--space-3);font-weight:700;font-size:var(--text-sm);line-height:var(--leading-ui)}
+.chip small{display:block;font-size:11px;font-weight:500;opacity:.85}
+.day-head h3{flex:1 1 12rem}
+.day-head .meta{width:100%}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+  min-height:var(--tap);padding:var(--space-2) var(--space-4);border-radius:var(--radius-md);
+  border:1px solid var(--border);background:var(--secondary);color:var(--secondary-foreground);
+  font-family:inherit;font-size:var(--text-sm);font-weight:600;cursor:pointer;text-decoration:none;
+  transition:background var(--duration) var(--ease)}
+.btn:hover{background:var(--muted);text-decoration:none}
+.btn-primary{background:var(--primary);color:var(--primary-foreground);border-color:transparent}
+.btn-primary:hover{background:var(--primary);opacity:.9}
+.btn-sm{min-height:32px;padding:var(--space-1) var(--space-3);font-size:var(--text-xs)}
+
+/* ---------- stop ---------- */
+.stop{display:grid;grid-template-columns:auto 1fr;gap:var(--space-3) var(--space-4);
+  padding:var(--space-4);border-bottom:1px solid var(--border)}
+.stop:last-child{border-bottom:none}
+.stop.done{background:var(--muted)}
+.stop.done .stop-name{text-decoration:line-through;color:var(--muted-foreground)}
+.tick{width:26px;height:26px;margin-top:2px;accent-color:var(--primary);cursor:pointer}
+.stop-name{font-weight:600;font-size:var(--text-lg);line-height:var(--leading-tight)}
+.stop-time{font-family:var(--font-mono);font-size:var(--text-sm);color:var(--muted-foreground)}
+.stop-head{display:flex;gap:var(--space-3);align-items:baseline;flex-wrap:wrap;margin-bottom:var(--space-2)}
+.facts{display:grid;gap:var(--space-2);font-size:var(--text-sm);line-height:var(--leading-ui)}
+.fact{display:grid;grid-template-columns:5.5rem 1fr;gap:var(--space-3)}
+.fact dt{color:var(--muted-foreground);font-size:var(--text-xs);padding-top:2px}
+.fact dd{color:var(--card-foreground)}
+.tags{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-3)}
+.tag{font-size:var(--text-xs);font-weight:600;padding:2px var(--space-2);border-radius:var(--radius-sm);
+  background:var(--muted);color:var(--muted-foreground);line-height:var(--leading-ui)}
+.tag.warn{background:var(--warning);color:var(--warning-foreground)}
+.tag.ok{background:var(--success);color:var(--success-foreground)}
+.tag.bad{background:var(--destructive);color:var(--destructive-foreground)}
+.tag.gold{background:var(--gold);color:var(--gold-foreground)}
+.actions{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-3)}
+.qty{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--muted-foreground)}
+.qty b{color:var(--card-foreground);font-size:var(--text-sm)}
+
+/* ---------- table ---------- */
+.tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+table{border-collapse:collapse;width:100%;min-width:940px;font-size:var(--text-sm)}
+th,td{text-align:left;padding:var(--space-3);border-bottom:1px solid var(--border);
+  vertical-align:top;line-height:var(--leading-ui)}
+th{font-size:var(--text-xs);color:var(--muted-foreground);font-weight:600;
+  background:var(--muted);position:sticky;top:0;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.num{font-family:var(--font-mono);text-align:right;white-space:nowrap}
+tr.closed td{color:var(--muted-foreground)}
+
+/* ---------- map ---------- */
+#map{height:min(72vh,620px);border-radius:var(--radius-lg);border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);background:var(--muted);z-index:1}
+.legend{display:flex;flex-wrap:wrap;gap:var(--space-2);margin:var(--space-4) 0}
+.legend button{appearance:none;cursor:pointer;font-family:inherit;font-weight:600;
+  font-size:var(--text-xs);min-height:32px;padding:var(--space-1) var(--space-3);
+  border-radius:var(--radius-full);border:1px solid transparent;line-height:var(--leading-ui)}
+.legend button[aria-pressed="false"]{background:var(--muted);color:var(--muted-foreground)}
+.pin{border-radius:var(--radius-full);width:26px;height:26px;display:grid;place-items:center;
+  font:600 13px/1 var(--font-mono);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.leaflet-popup-content{font-family:var(--font-sans);font-size:var(--text-sm);line-height:var(--leading-ui);margin:12px 14px}
+.leaflet-popup-content b{font-size:var(--text-base)}
+
+/* ---------- checklist ---------- */
+.cards{display:grid;gap:var(--space-4)}
+@media(min-width:840px){.cards{grid-template-columns:1fr 1fr}}
+.panel{background:var(--card);color:var(--card-foreground);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-sm)}
+.panel h3{margin-bottom:var(--space-3)}
+.panel ul{padding-left:1.2em;font-size:var(--text-sm);line-height:var(--leading-body)}
+.panel li{margin-bottom:var(--space-2)}
+.panel li::marker{color:var(--muted-foreground)}
+
+section[hidden]{display:none!important}
+.sec-title{margin:var(--space-6) 0 var(--space-4)}
+footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:var(--space-4)}
+
+@media print{
+  .tabs,.legend,.actions,.back,#map,.tick{display:none!important}
+  section[hidden]{display:block!important}
+  body{background:#fff;color:#000;padding:0}
+  .day,.panel,.tablewrap,.stat{box-shadow:none;break-inside:avoid}
+  table{min-width:0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head-inner">
+    <div class="brand">
+      <div class="mark">ภฟ</div>
+      <div>
+        <div class="kicker">TANAPAT · Delivery Plan</div>
+        <h1>ภูฟ้า — แผนส่งสิ่งพิมพ์ 2569</h1>
+      </div>
+    </div>
+    <a class="back" href="https://hellopae.github.io/AGAPAEagent/" target="_blank" rel="noopener">← แดชบอร์ด AGAPAE</a>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="wrap" role="tablist">
+    <button class="tab" role="tab" aria-selected="true"  data-sec="plan">แผนส่ง 5 วัน</button>
+    <button class="tab" role="tab" aria-selected="false" data-sec="map">แผนที่</button>
+    <button class="tab" role="tab" aria-selected="false" data-sec="all">ทุกสาขา</button>
+    <button class="tab" role="tab" aria-selected="false" data-sec="how">วิธีส่ง / เช็คลิสต์</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <div class="stats">
+    <div class="stat"><b class="mono" id="sBranch">18</b><span>สาขาที่ต้องส่ง (ปิดปรับปรุง 2)</span></div>
+    <div class="stat"><b class="mono" id="sQty">15,000</b><span>ชิ้นรวม (สคส. + สมุด 2 แบบ)</span></div>
+    <div class="stat"><b class="mono">5</b><span>วันเดินสาย (ยุบเหลือ 4 ได้)</span></div>
+    <div class="stat"><b class="mono" id="sDone">0</b><span>ส่งแล้ว (กดติ๊กในแผน)</span></div>
+  </div>
+
+  <!-- ============ PLAN ============ -->
+  <section id="secPlan">
+    <div class="notice">
+      <strong>อ่านก่อนออกรถ</strong> — ที่อยู่ เบอร์โทร เวลาเปิด-ปิด มาจากหน้าสาขาทางการของภูฟ้า
+      (<a href="https://www.phufa.org/branch-all/" target="_blank" rel="noopener">phufa.org/branch-all</a>)
+      ส่วนชั้น/เวลารับของ/ที่จอดรถ มาจากบันทึกของพี่เป้เอง
+      แต่ <strong>เรื่อง “ลงทะเบียนรถส่งของ” เป็นแนวปฏิบัติทั่วไปของห้าง ยังไม่ได้ยืนยันรายสาขา</strong>
+      — โทรนัดล่วงหน้า 1 วันตามเบอร์ในแต่ละการ์ดก่อนเสมอ
+    </div>
+    <div id="days"></div>
+  </section>
+
+  <!-- ============ MAP ============ -->
+  <section id="secMap" hidden>
+    <div class="legend" id="legend"></div>
+    <div id="map"></div>
+    <p class="meta" style="margin-top:var(--space-3)">
+      หมุดวางจากพิกัดจริงของอาคาร/ห้าง (OpenStreetMap) — สาขาจตุจักรเป็นพิกัดโดยประมาณ เพราะร้านอยู่ในตลาดนัดโครงการ 24
+      กดที่หมุดเพื่อดูรายละเอียดและเปิด Google Maps
+    </p>
+  </section>
+
+  <!-- ============ ALL BRANCHES ============ -->
+  <section id="secAll" hidden>
+    <h2 class="sec-title">ทุกสาขา · 20 รายการตามตารางสิ่งพิมพ์ 69</h2>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>สาขา</th><th>วัน</th><th>ชั้น</th><th>เวลาเปิด</th>
+            <th>โทร</th><th class="num">สคส.</th><th class="num">สมุดเล็ก</th><th class="num">สมุดใหญ่</th><th class="num">รวม</th>
+          </tr>
+        </thead>
+        <tbody id="allRows"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6"><b>รวมทั้งหมด</b></td>
+            <td class="num"><b>10,000</b></td><td class="num"><b>3,000</b></td>
+            <td class="num"><b>2,000</b></td><td class="num"><b>15,000</b></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ HOW ============ -->
+  <section id="secHow" hidden>
+    <h2 class="sec-title">วิธีส่ง / เช็คลิสต์</h2>
+    <div class="cards">
+      <div class="panel">
+        <h3>โทรนัดล่วงหน้า — ถามให้ครบ 6 ข้อ</h3>
+        <ul>
+          <li>ส่งของวันนี้/พรุ่งนี้ได้ไหม ช่วงเวลาไหนสะดวกที่สุด</li>
+          <li>เข้าทาง <b>ประตูรับสินค้า (loading dock)</b> ตรงไหน หรือเข้าทางหน้าห้างได้เลย</li>
+          <li>ต้อง <b>ลงทะเบียน/แลกบัตร</b> ที่จุดไหน ใช้บัตรประชาชนหรือใบส่งของ</li>
+          <li>ใช้ <b>ลิฟต์ขนของ</b> ตัวไหน มีรถเข็นให้ยืมไหม</li>
+          <li>จอดรถตรงไหน ประทับตราค่าจอดได้ไหม</li>
+          <li>ใครเป็นคนเซ็นรับ ถ้าไม่อยู่ให้ฝากใครได้</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>ของที่ต้องมีติดรถ</h3>
+        <ul>
+          <li>ใบส่งของ 2 ชุดต่อสาขา (สาขาเก็บ 1 / เซ็นคืนเรา 1) — 18 สาขา = 36 ใบ</li>
+          <li>บัตรประชาชน + ใบขับขี่ (ห้างส่วนใหญ่ขอแลกบัตรที่ป้อม)</li>
+          <li>รถเข็นพับได้ 1 คัน — สัมมากรกับจตุจักรต้องเดินไกล</li>
+          <li>เทปใส + คัตเตอร์ + ปากกาเมจิก เขียนชื่อสาขาบนกล่อง</li>
+          <li>พลาสติกคลุมกันฝน (ส่งช่วงหน้าฝนกล่องสคส.เสียง่าย)</li>
+          <li>เงินสดค่าที่จอดรถ + เหรียญ</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>กฎเวลาที่ห้ามพลาด</h3>
+        <ul>
+          <li><b>จามจุรี / ไอคอนสยาม</b> — รับของ <b>ก่อน 10:00</b> หรือ <b>14:00–17:00</b> เท่านั้น</li>
+          <li><b>ฟิวเจอร์พาร์ค รังสิต</b> — <b>ก่อน 10:00</b> (ก่อนห้างเปิด เข้าทางประตูรับสินค้า)</li>
+          <li><b>พาราไดซ์ พาร์ค</b> — <b>ก่อน 14:00</b> จอดชั้น 2A</li>
+          <li><b>สัมมากร เพลส</b> — จอดชั้น 3 แล้วเดินข้ามมาตึกเอ ชั้น 2</li>
+          <li><b>จตุจักร ปิดวันจันทร์</b> (เปิด อังคาร–อาทิตย์) — อย่าจัดวันสายเหนือตรงวันจันทร์</li>
+          <li><b>สำนักงาน</b> เปิด จ.–ศ. 08:30–17:30 — เสาร์-อาทิตย์ส่งไม่ได้</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>หัวหิน · น่าน · สาขาปิด</h3>
+        <ul>
+          <li><b>หัวหิน (490 ชิ้น)</b> และ <b>น่าน (490 ชิ้น)</b> ไม่ต้องขับไปเอง —
+              ตามบันทึกเดิมให้ <b>ส่งรวมไว้ที่สาขาสุขุมวิท/สำนักงาน</b> แล้วให้ภูฟ้ากระจายต่อ (ยืนยันกับสำนักงานอีกครั้ง)</li>
+          <li><b>กรมศิลปากร</b> และ <b>กำแพงเพชร</b> — ตารางปี 69 ระบุ “ปิดปรับปรุง” จำนวนเป็น 0 ไม่ต้องเตรียมของ</li>
+          <li><b>สำนักงาน กับ สาขาสุขุมวิท อยู่ตึกเดียวกัน</b> (123 ปากซอยสุขุมวิท 7) — ไปครั้งเดียวจบ 2 รายการ
+              แต่แยกใบส่งของคนละใบ เพราะจำนวนไม่เท่ากัน</li>
+          <li>วันแรกจึงเป็นวันที่หนักที่สุด: 1,900 + 1,440 + 490 + 490 = <b>4,320 ชิ้น</b> ที่จุดเดียว</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>แนวปฏิบัติตามประเภทสถานที่ (ยังต้องโทรยืนยัน)</h3>
+        <ul>
+          <li><b>ห้างใหญ่</b> (ไอคอน, สยามดิส, ฟิวเจอร์พาร์ค, พาราไดซ์, บิ๊กซี, โลตัส, บองมาร์เช่, สัมมากร, วัชรพล):
+              ปกติเข้าทางประตูรับสินค้า แลกบัตรที่ป้อม ใช้ลิฟต์ขนของ และ<b>ห้ามลากของผ่านโถงหน้าร้านตอนห้างเปิด</b></li>
+          <li><b>โรงพยาบาล</b> (รามาธิบดี, ศิริราช): ที่จอดแน่นมากหลัง 09:00 ควรถึงตั้งแต่เช้า
+              รามาเปิดตั้งแต่ 07:00 ส่งเช้าตรู่ได้เปรียบที่สุด</li>
+          <li><b>ตลาดนัดจตุจักร</b>: รถเข้าซอยยาก จอดฝั่งกำแพงเพชร 2 แล้วเข็นเข้าไป
+              จุดสังเกตคือ MRT กำแพงเพชร ประตู 2</li>
+          <li><b>อาคารสำนักงาน</b> (จามจุรี, สำนักงานภูฟ้า): จามจุรีมีจุดรับของชั้น B ต้องลงทะเบียน
+              ส่วนสำนักงานภูฟ้าเป็นตึกของภูฟ้าเอง จอดหน้าตึกได้</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>ที่มาของข้อมูล</h3>
+        <ul>
+          <li>จำนวนงานพิมพ์ — ไฟล์ <span class="mono">ร่างตารางสิ่งพิมพ์ 69.pdf</span> (สคส. 10,000 / สมุดเล็ก 3,000 / สมุดใหญ่ 2,000)</li>
+          <li>ชั้น เวลารับของ ที่จอดรถ การจัดกลุ่ม ซ้าย-กลาง-ขวา — Google Doc ของพี่เป้</li>
+          <li>ที่อยู่ เบอร์โทร เวลาเปิด-ปิด — <a href="https://www.phufa.org/branch-all/" target="_blank" rel="noopener">phufa.org/branch-all</a>
+              และหน้าติดต่อ <a href="https://www.phufa.org/contact/" target="_blank" rel="noopener">phufa.org/contact</a></li>
+          <li>พิกัดหมุด — OpenStreetMap / Nominatim</li>
+          <li>จุดแวะเพิ่มในเอกสารเดิม (<b>Modernform</b>, <b>คุณเล็ก</b>) ยังไม่มีที่อยู่ จึงยังไม่ใส่หมุด —
+              บอกที่อยู่มาแล้วจะเพิ่มให้</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="meta">อัปเดต 4 ก.ย. 2569 · สร้างโดย AGAPAE AI Studio · ติ๊กช่องที่ส่งแล้วจะจำไว้ในเครื่องนี้</p>
+  </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ===================== DATA ===================== */
+const DAYS = [
+  { n:1, title:"คลังกลาง — สำนักงาน / สุขุมวิท", zone:"วัฒนา (ซ.สุขุมวิท 7)",
+    note:"จุดเดียวแต่ของเยอะที่สุด 4,320 ชิ้น รวมของหัวหินกับน่านที่ฝากกระจายต่อ · ต้องเป็นวันจันทร์–ศุกร์เท่านั้น" },
+  { n:2, title:"สายเหนือ — รังสิต → วัชรพล → จตุจักร", zone:"ปทุมธานี · บางเขน · จตุจักร",
+    note:"ไล่จากเหนือลงใต้ ออกเช้าให้ถึงฟิวเจอร์พาร์คก่อน 10 โมง · ห้ามจัดวันจันทร์ (จตุจักรปิด)" },
+  { n:3, title:"ใจกลางเมือง — รามา → สามย่าน → ราชประสงค์ → พระราม 4", zone:"ราชเทวี · ปทุมวัน · คลองเตย",
+    note:"วันนี้ของเยอะรองลงมา 4,260 ชิ้น · จามจุรีต้องถึงก่อน 10 โมง ไม่งั้นต้องรอถึงบ่าย 2" },
+  { n:4, title:"ฝั่งธน / ตะวันตก — ศิริราช → บางใหญ่ → ไอคอนสยาม", zone:"บางกอกน้อย · บางกรวย · คลองสาน",
+    note:"ไอคอนสยามรับของบ่าย 2–5 เท่านั้น เลยวิ่งบางใหญ่ช่วงสายแล้วค่อยย้อนเข้าไอคอน" },
+  { n:5, title:"ตะวันออก — พาราไดซ์ พาร์ค → สัมมากร เพลส", zone:"ประเวศ · สะพานสูง",
+    note:"วันสบายที่สุด 2 จุด · พาราไดซ์ต้องก่อนบ่าย 2 · ถ้าอยากจบใน 4 วัน ยุบวันนี้ไปต่อท้ายวันที่ 1 ได้ (สุขุมวิท → พาราไดซ์ → สัมมากร)" },
+];
+
+const B = [
+  { id:"office", day:1, seq:1, eta:"08:30", name:"สำนักงานภูฟ้า", floor:"ตึกสำนักงาน",
+    addr:"123 ปากซอยสุขุมวิท 7 ถ.สุขุมวิท แขวงคลองเตยเหนือ เขตวัฒนา กทม. 10110",
+    tel:["0-2655-6242-3"], hours:"จันทร์–ศุกร์ 08:30–17:30", days:"จ–ศ",
+    how:"ตึกของภูฟ้าเอง จอดหน้าตึกได้ ไม่ต้องแลกบัตรห้าง", reg:"none",
+    lat:13.742837, lng:100.555203, q:[1320,340,240],
+    tags:[["gold","ของเยอะสุด 1,900 ชิ้น"],["warn","จ–ศ เท่านั้น"]] },
+  { id:"sukhumvit", day:1, seq:2, eta:"08:30", name:"สาขาสุขุมวิท", floor:"ตึกเดียวกับสำนักงาน",
+    addr:"123 สุขุมวิทซอย 7 ถ.สุขุมวิท แขวงคลองเตยเหนือ เขตวัฒนา กทม. 10110",
+    tel:["02-650-3311"], hours:"จ–ศ 08:00–18:00 · ส–อา และวันหยุด 09:30–18:00", days:"ทุกวัน",
+    how:"อยู่ตึกเดียวกับสำนักงาน ลงของรอบเดียว แต่แยกใบส่งของคนละใบ", reg:"none",
+    lat:13.742837, lng:100.555203, q:[920,320,200],
+    tags:[["ok","ลงพร้อมสำนักงาน"]] },
+  { id:"huahin", day:1, seq:3, eta:"—", name:"หัวหิน (ฝากส่งต่อ)", floor:"ห้อง M212 ชั้น 2 หัวหิน มาร์เก็ต วิลเลจ",
+    addr:"2234/1 อาคารหัวหินมาร์เก็ตวิลเลจ ถ.เพชรเกษม อ.หัวหิน จ.ประจวบคีรีขันธ์ 77110",
+    tel:["032-526-127"], hours:"ทุกวัน 10:30–20:00", days:"ทุกวัน",
+    how:"ไม่ต้องขับไปเอง — ฝากไว้ที่สำนักงาน/สุขุมวิทให้ภูฟ้ากระจายต่อ (ยืนยันกับสำนักงานก่อน)", reg:"none",
+    lat:12.568590, lng:99.958420, offmap:true, q:[400,50,40],
+    tags:[["ok","ฝากที่สำนักงาน"]] },
+  { id:"nan", day:1, seq:4, eta:"—", name:"น่าน (ฝากส่งต่อ)", floor:"ร้านเดี่ยว",
+    addr:"229 ถ.มะโน ต.ในเวียง อ.เมืองน่าน จ.น่าน 55000",
+    tel:["054-050-117"], hours:"ทุกวัน 08:00–17:00", days:"ทุกวัน",
+    how:"ไม่ต้องขับไปเอง — ฝากไว้ที่สำนักงาน/สุขุมวิทให้ภูฟ้ากระจายต่อ (ยืนยันกับสำนักงานก่อน)", reg:"none",
+    lat:18.774160, lng:100.771080, offmap:true, q:[400,50,40],
+    tags:[["ok","ฝากที่สำนักงาน"]] },
+
+  { id:"future", day:2, seq:1, eta:"09:00", name:"ฟิวเจอร์พาร์ค รังสิต", floor:"โซน Zpell ชั้น 1",
+    addr:"ศูนย์การค้าฟิวเจอร์พาร์ค รังสิต ถ.พหลโยธิน อ.ธัญบุรี จ.ปทุมธานี 12130",
+    tel:["02-150-9088"], hours:"จ–ศ 10:30–21:00 · ส–อา และวันหยุด 10:00–21:00", days:"ทุกวัน",
+    how:"เข้าประตูรับสินค้าก่อนห้างเปิด ใช้ลิฟต์ขนของขึ้นโซน Zpell ชั้น 1", reg:"mall",
+    lat:13.988952, lng:100.618440, q:[520,150,120],
+    tags:[["warn","ต้องถึงก่อน 10:00"],["bad","ไกลสุด ออกจากบ้าน 07:30"]] },
+  { id:"watcharaphon", day:2, seq:2, eta:"10:45", name:"เดอะแพลทินั่ม เพลส วัชรพล", floor:"ชั้น 2",
+    addr:"ศูนย์การค้าเดอะ แพลททินั่ม เพลส ถ.วัชรพล เขตบางเขน กทม. 10230",
+    tel:["0-2064-2375"], hours:"ทุกวัน 09:30–18:00", days:"ทุกวัน",
+    how:"ห้างชุมชนขนาดเล็ก จอดใกล้ทางเข้าแล้วเข็นขึ้นชั้น 2 ได้เลย", reg:"mall",
+    lat:13.856147, lng:100.640506, q:[400,100,80], tags:[] },
+  { id:"bonmarche", day:2, seq:3, eta:"12:00", name:"บองมาร์เช่ มาร์เก็ตพาร์ค", floor:"ชั้น 2 โซนพลาซ่า 2",
+    addr:"ศูนย์การค้าบองมาร์เช่ มาร์เก็ตพาร์ค ถ.เทศบาลสงเคราะห์ เขตจตุจักร กทม. 10900",
+    tel:["0-2591-2199"], hours:"ทุกวัน 09:30–18:00", days:"ทุกวัน",
+    how:"เข้าฝั่งพลาซ่า 2 จอดในลานแล้วเข็นขึ้นชั้น 2", reg:"mall",
+    lat:13.839164, lng:100.550912, q:[400,100,80], tags:[] },
+  { id:"chatuchak", day:2, seq:4, eta:"13:30", name:"จตุจักร", floor:"โครงการ 24 (ใกล้ MRT กำแพงเพชร ประตู 2)",
+    addr:"โครงการ 24 ถ.กำแพงเพชร 2 เขตจตุจักร กทม. 10900",
+    tel:["02-494-9132-3"], hours:"อังคาร–อาทิตย์ 09:30–18:00", days:"อ–อา",
+    how:"รถเข้าซอยตลาดยาก จอดฝั่งกำแพงเพชร 2 แล้วเข็นเข้าไปทางประตู 2 ของ MRT กำแพงเพชร", reg:"market",
+    lat:13.799800, lng:100.549000, approx:true, q:[400,100,80],
+    tags:[["bad","ปิดวันจันทร์"],["warn","ต้องเข็นของเข้าไปเอง"]] },
+
+  { id:"rama", day:3, seq:1, eta:"08:00", name:"โรงพยาบาลรามาธิบดี", floor:"อาคารสมเด็จพระเทพรัตน์ ชั้น 1",
+    addr:"270/1 ถ.พระราม 6 แขวงทุ่งพญาไท เขตราชเทวี กทม. 10400",
+    tel:["02-354-5109"], hours:"จ–ศ 07:00–19:00 · เสาร์/วันหยุด 08:00–18:00 · อาทิตย์ 08:00–16:00", days:"ทุกวัน",
+    how:"เปิดตั้งแต่ 07:00 — ถึงเช้าตรู่จะจอดง่ายที่สุด แลกบัตรที่ป้อม เข้าอาคารสมเด็จพระเทพรัตน์", reg:"hospital",
+    lat:13.767283, lng:100.526172, q:[520,250,130],
+    tags:[["ok","เปิด 07:00 เริ่มวันที่นี่"]] },
+  { id:"chamchuri", day:3, seq:2, eta:"09:15", name:"จัตุรัสจามจุรี", floor:"ชั้น 1 อาคารสำนักงานจามจุรี",
+    addr:"317 จัตุรัสจามจุรี ถ.พญาไท เขตปทุมวัน กทม. 10330",
+    tel:["02-160-5077"], hours:"จ–ศ 07:00–20:00 · ส–อา และวันหยุด 10:00–19:00", days:"ทุกวัน",
+    how:"เป็นอาคารสำนักงาน ต้องลงทะเบียนที่จุดรับของ แล้วใช้ลิฟต์ขนของขึ้นชั้น 1 ฝั่งร้าน", reg:"office",
+    lat:13.732942, lng:100.530712, q:[720,250,130],
+    tags:[["warn","ก่อน 10:00 หรือ 14:00–17:00"],["gold","1,100 ชิ้น"]] },
+  { id:"siamdisc", day:3, seq:3, eta:"10:30", name:"สยามดิสคัฟเวอรี่", floor:"ชั้น 3 โซน Creative Labs",
+    addr:"194 ศูนย์การค้าสยามดิสคัฟเวอรี่ ถ.พระราม 1 เขตปทุมวัน กทม. 10330",
+    tel:["0-2658-0208"], hours:"ทุกวัน 10:00–22:00", days:"ทุกวัน",
+    how:"เข้าประตูรับสินค้าใต้ดิน ลงทะเบียนแล้วใช้ลิฟต์ขนของขึ้นชั้น 3", reg:"mall",
+    lat:13.746687, lng:100.531529, q:[520,250,120], tags:[] },
+  { id:"bigc-ratchadamri", day:3, seq:4, eta:"11:30", name:"บิ๊กซี ราชดำริ", floor:"ชั้น 2",
+    addr:"97/11 บิ๊กซี ราชดำริ ถ.ราชดำริห์ แขวงลุมพินี เขตปทุมวัน กทม. 10330",
+    tel:["02-655-5995"], hours:"ทุกวัน 10:00–20:30", days:"ทุกวัน",
+    how:"ประตูรับสินค้าฝั่งหลัง แลกบัตร แล้วขึ้นลิฟต์ขนของชั้น 2", reg:"mall",
+    lat:13.747032, lng:100.540766, q:[400,100,80], tags:[] },
+  { id:"bigc-rama4", day:3, seq:5, eta:"12:30", name:"บิ๊กซี เอ็กซ์ตร้า พระราม 4", floor:"ชั้น 2",
+    addr:"2929 ถ.พระรามสี่ แขวงคลองตัน เขตคลองเตย กทม. 10110",
+    tel:["02-661-5708","093-046-1916"], hours:"ทุกวัน 10:00–20:30", days:"ทุกวัน",
+    how:"เข้าลานจอดแล้วใช้ประตูรับสินค้า ขึ้นลิฟต์ขนของชั้น 2", reg:"mall",
+    lat:13.718329, lng:100.568853, q:[520,150,120], tags:[] },
+
+  { id:"siriraj", day:4, seq:1, eta:"09:30", name:"โรงพยาบาลศิริราช", floor:"อาคารเอ ชั้น 1",
+    addr:"264/18 ถ.รถไฟ แขวงศิริราช เขตบางกอกน้อย กทม. 10700",
+    tel:["02-418-3498"], hours:"ทุกวัน 09:30–18:00", days:"ทุกวัน",
+    how:"ที่จอดในโรงพยาบาลเต็มเร็ว ถ้าเต็มจอดฝั่งวังหลังแล้วเข็นเข้ามา แลกบัตรที่ป้อม", reg:"hospital",
+    lat:13.757822, lng:100.485383, q:[520,150,120],
+    tags:[["warn","ที่จอดหายาก ไปเช้า"]] },
+  { id:"bangyai", day:4, seq:2, eta:"11:00", name:"โลตัส บางใหญ่", floor:"ชั้น 2",
+    addr:"90 หมู่ 5 โลตัส บางใหญ่ ต.บางคูเวียง อ.บางกรวย จ.นนทบุรี 11130",
+    tel:["02-459-2291"], hours:"ทุกวัน 10:00–20:00", days:"ทุกวัน",
+    how:"ไปทางราชพฤกษ์ เข้าประตูรับสินค้าฝั่งหลัง ใช้ลิฟต์ขนของขึ้นชั้น 2", reg:"mall",
+    lat:13.824209, lng:100.410777, q:[520,150,120], tags:[] },
+  { id:"iconsiam", day:4, seq:3, eta:"14:30", name:"ไอคอนสยาม", floor:"ชั้น 5 หน้าล็อบบี้",
+    addr:"299 ถ.เจริญนคร แขวงคลองต้นไทร เขตคลองสาน กทม. 10600",
+    tel:["02-006-4529"], hours:"ทุกวัน 10:00–22:00", days:"ทุกวัน",
+    how:"ห้างใหญ่ ระบบรับของเข้ม ต้องลงทะเบียนที่ศูนย์รับสินค้าชั้นใต้ดินก่อนเสมอ", reg:"mall",
+    lat:13.726823, lng:100.510294, q:[520,240,100],
+    tags:[["warn","ก่อน 10:00 หรือ 14:00–17:00"]] },
+
+  { id:"paradise", day:5, seq:1, eta:"10:30", name:"พาราไดซ์ พาร์ค", floor:"ชั้น 2 โซน C",
+    addr:"61 ศูนย์การค้าพาราไดซ์ พาร์ค ถ.ศรีนครินทร์ แขวงหนองบอน เขตประเวศ กทม. 10250",
+    tel:["02-780-2259"], hours:"จ–ศ 10:30–20:30 · ส–อา และวันหยุด 10:00–20:30", days:"ทุกวัน",
+    how:"จอดที่ชั้น 2A แล้วเข็นเข้าโซน C ชั้น 2 ได้เลย (ตามบันทึกเดิมของพี่เป้)", reg:"mall",
+    lat:13.687029, lng:100.647541, q:[600,150,120],
+    tags:[["warn","ต้องถึงก่อน 14:00"],["ok","จอดชั้น 2A"]] },
+  { id:"sammakorn", day:5, seq:2, eta:"12:30", name:"สัมมากร เพลส รามคำแหง 110", floor:"อาคารเอ ชั้น 2",
+    addr:"86 ศูนย์การค้าสัมมากร เพลส รามคำแหง 110 แขวงสะพานสูง เขตสะพานสูง กทม. 10240",
+    tel:["02-372-3543"], hours:"ทุกวัน 09:30–18:00", days:"ทุกวัน",
+    how:"จอดที่จอดรถชั้น 3 แล้วเดินข้ามมาตึกเอ ชั้น 2 — ต้องมีรถเข็น", reg:"mall",
+    lat:13.764598, lng:100.678487, q:[400,100,80],
+    tags:[["warn","จอดชั้น 3 เดินข้ามมาชั้น 2"]] },
+];
+
+const CLOSED = [
+  { name:"กรมศิลปากร", addr:"อาคารกรมศิลปากร ถ.หน้าพระธาตุ เขตพระนคร กทม.", tel:["092 893 4518"], hours:"ทุกวัน 09:00–16:00" },
+  { name:"กำแพงเพชร", addr:"—", tel:[], hours:"—" },
+];
+
+const REG = {
+  none:     ["ok",  "ไม่ต้องลงทะเบียน"],
+  mall:     ["warn","ห้าง — ต้องแลกบัตร/ลงทะเบียน"],
+  office:   ["warn","อาคารสำนักงาน — ต้องลงทะเบียน"],
+  hospital: ["warn","โรงพยาบาล — แลกบัตรที่ป้อม"],
+  market:   ["warn","ตลาดนัด — เข็นของเข้าเอง"],
+};
+
+/* ===================== HELPERS ===================== */
+const $  = s => document.querySelector(s);
+const nf = n => n.toLocaleString('en-US');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const total = b => b.q[0] + b.q[1] + b.q[2];
+const dayColor = n => `var(--d${n})`;
+const dayFg    = n => `var(--d${n}-fg)`;
+const stopsOf  = n => B.filter(b => b.day === n && !b.offmap).sort((a,b) => a.seq - b.seq);
+const gmapPin  = b => `https://www.google.com/maps/search/?api=1&query=${b.lat},${b.lng}`;
+const telHref  = t => 'tel:' + t.replace(/[^0-9+]/g, '');
+
+function gmapRoute(n){
+  const seen = new Set();
+  const s = stopsOf(n).filter(b => {          // สำนักงานกับสุขุมวิทอยู่พิกัดเดียวกัน นับเป็นจุดเดียว
+    const k = `${b.lat},${b.lng}`;
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
+  });
+  if(!s.length) return '#';
+  const dest = s[s.length-1];
+  const wp = s.slice(0,-1).map(b => `${b.lat},${b.lng}`).join('|');
+  return `https://www.google.com/maps/dir/?api=1&travelmode=driving`
+       + `&destination=${dest.lat},${dest.lng}`
+       + (wp ? `&waypoints=${encodeURIComponent(wp)}` : '');
+}
+
+/* ---- ติ๊กว่าส่งแล้ว (จำในเครื่อง) ---- */
+let done = {};
+try { done = JSON.parse(localStorage.getItem('phufa-done') || '{}'); } catch(e) { done = {}; }
+function saveDone(){
+  try { localStorage.setItem('phufa-done', JSON.stringify(done)); } catch(e) {}
+  $('#sDone').textContent = Object.values(done).filter(Boolean).length;
+}
+
+/* ===================== RENDER: PLAN ===================== */
+function renderPlan(){
+  $('#days').innerHTML = DAYS.map(d => {
+    const list = B.filter(b => b.day === d.n).sort((a,b) => a.seq - b.seq);
+    const qty  = list.reduce((s,b) => s + total(b), 0);
+    const stops = list.map(b => {
+      const [rc, rt] = REG[b.reg];
+      const tags = [[rc, rt], ...b.tags]
+        .map(([c,t]) => `<span class="tag ${c}">${esc(t)}</span>`).join('');
+      const tel = b.tel.map(t =>
+        `<a href="${telHref(t)}" class="mono">${esc(t)}</a>`).join(' · ') || '—';
+      return `
+      <div class="stop${done[b.id] ? ' done' : ''}" data-id="${b.id}">
+        <input class="tick" type="checkbox" id="ck-${b.id}" ${done[b.id] ? 'checked' : ''}
+               aria-label="ส่งแล้ว: ${esc(b.name)}">
+        <div>
+          <div class="stop-head">
+            <span class="stop-time">${esc(b.eta)}</span>
+            <span class="stop-name">${b.seq}. ${esc(b.name)}</span>
+            <span class="qty"><b>${nf(total(b))}</b> ชิ้น</span>
+          </div>
+          <dl class="facts">
+            <div class="fact"><dt>ตำแหน่ง</dt><dd>${esc(b.floor)}</dd></div>
+            <div class="fact"><dt>ที่อยู่</dt><dd>${esc(b.addr)}</dd></div>
+            <div class="fact"><dt>เปิด</dt><dd>${esc(b.hours)}</dd></div>
+            <div class="fact"><dt>โทร</dt><dd>${tel}</dd></div>
+            <div class="fact"><dt>วิธีส่ง</dt><dd>${esc(b.how)}</dd></div>
+            <div class="fact"><dt>ของ</dt><dd class="qty">สคส. ${nf(b.q[0])} · สมุดเล็ก ${nf(b.q[1])} · สมุดใหญ่ ${nf(b.q[2])}</dd></div>
+          </dl>
+          <div class="tags">${tags}</div>
+          <div class="actions">
+            <a class="btn btn-sm" href="${gmapPin(b)}" target="_blank" rel="noopener">เปิดใน Google Maps</a>
+            ${b.tel.length ? `<a class="btn btn-sm" href="${telHref(b.tel[0])}">โทรนัด</a>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `
+    <article class="day">
+      <div class="day-head">
+        <div class="chip" style="background:${dayColor(d.n)};color:${dayFg(d.n)}">
+          วัน ${d.n}<small>${list.filter(b=>!b.offmap).length} จุด</small>
+        </div>
+        <h3>${esc(d.title)}</h3>
+        <a class="btn btn-primary" href="${gmapRoute(d.n)}" target="_blank" rel="noopener">เส้นทางทั้งวัน ↗</a>
+        <p class="meta">${esc(d.zone)} · รวม <b class="mono">${nf(qty)}</b> ชิ้น — ${esc(d.note)}</p>
+      </div>
+      ${stops}
+    </article>`;
+  }).join('');
+
+  document.querySelectorAll('.tick').forEach(el => {
+    el.addEventListener('change', e => {
+      const id = e.target.closest('.stop').dataset.id;
+      done[id] = e.target.checked;
+      e.target.closest('.stop').classList.toggle('done', e.target.checked);
+      saveDone();
+    });
+  });
+  saveDone();
+}
+
+/* ===================== RENDER: TABLE ===================== */
+function renderTable(){
+  const rows = B.slice().sort((a,b) => a.day - b.day || a.seq - b.seq).map((b,i) => `
+    <tr>
+      <td class="num">${i+1}</td>
+      <td><b>${esc(b.name)}</b><br><span class="meta">${esc(b.addr)}</span></td>
+      <td><span class="tag" style="background:${dayColor(b.day)};color:${dayFg(b.day)}">วัน ${b.day}</span></td>
+      <td>${esc(b.floor)}</td>
+      <td>${esc(b.hours)}</td>
+      <td class="mono">${b.tel.map(esc).join('<br>') || '—'}</td>
+      <td class="num">${nf(b.q[0])}</td><td class="num">${nf(b.q[1])}</td>
+      <td class="num">${nf(b.q[2])}</td><td class="num"><b>${nf(total(b))}</b></td>
+    </tr>`).join('')
+  + CLOSED.map((c,i) => `
+    <tr class="closed">
+      <td class="num">${B.length + i + 1}</td>
+      <td><b>${esc(c.name)}</b><br><span class="meta">${esc(c.addr)}</span></td>
+      <td><span class="tag bad">ปิดปรับปรุง</span></td>
+      <td>—</td><td>${esc(c.hours)}</td><td class="mono">${c.tel.map(esc).join('') || '—'}</td>
+      <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><b>0</b></td>
+    </tr>`).join('');
+  $('#allRows').innerHTML = rows;
+  $('#sBranch').textContent = B.length;
+  $('#sQty').textContent = nf(B.reduce((s,b) => s + total(b), 0));
+}
+
+/* ===================== RENDER: MAP ===================== */
+let map, layers = {};
+function renderMap(){
+  if(map){ map.invalidateSize(); return; }
+  map = L.map('map', { scrollWheelZoom:false }).setView([13.79, 100.55], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  const bounds = [];
+  DAYS.forEach(d => {
+    const g = L.layerGroup().addTo(map);
+    layers[d.n] = g;
+    const byCoord = new Map();                  // รวมสาขาที่อยู่พิกัดเดียวกันให้เป็นหมุดเดียว
+    stopsOf(d.n).forEach(b => {
+      const k = `${b.lat},${b.lng}`;
+      (byCoord.get(k) || byCoord.set(k, []).get(k)).push(b);
+    });
+    [...byCoord.values()].forEach(group => {
+      const b = group[0];
+      bounds.push([b.lat, b.lng]);
+      const icon = L.divIcon({
+        className:'', iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-14],
+        html:`<div class="pin" style="background:${getComputedStyle(document.documentElement).getPropertyValue(`--d${d.n}`)};
+              color:${getComputedStyle(document.documentElement).getPropertyValue(`--d${d.n}-fg`)}">${b.seq}</div>`
+      });
+      const names = group.map(x => esc(x.name)).join(' + ');
+      const qty   = group.reduce((t2,x) => t2 + total(x), 0);
+      const tels  = [...new Set(group.flatMap(x => x.tel))];
+      L.marker([b.lat, b.lng], { icon, title:names }).addTo(g).bindPopup(`
+        <b>${names}</b><br>
+        <span style="color:${dayColor(d.n)};font-weight:600">วันที่ ${d.n} · จุดที่ ${b.seq} · ${esc(b.eta)}</span><br>
+        ${esc(b.floor)}${b.approx ? ' <em>(พิกัดโดยประมาณ)</em>' : ''}<br>
+        ${esc(b.hours)}<br>
+        ${tels.map(t => `<a href="${telHref(t)}">${esc(t)}</a>`).join(' · ')}<br>
+        <b>${nf(qty)}</b> ชิ้น ·
+        <a href="${gmapPin(b)}" target="_blank" rel="noopener">Google Maps ↗</a>
+      `);
+    });
+    // เส้นเชื่อมลำดับการเดินทางของวันนั้น
+    const line = [...byCoord.values()].map(gr => [gr[0].lat, gr[0].lng]);
+    if(line.length > 1){
+      L.polyline(line, {
+        color:getComputedStyle(document.documentElement).getPropertyValue(`--d${d.n}`),
+        weight:3, opacity:.7, dashArray:'6 6'
+      }).addTo(g);
+    }
+  });
+  map.fitBounds(bounds, { padding:[36,36] });
+
+  $('#legend').innerHTML = DAYS.map(d => `
+    <button data-day="${d.n}" aria-pressed="true"
+            style="background:${dayColor(d.n)};color:${dayFg(d.n)}">
+      วัน ${d.n} · ${esc(d.zone.split(' · ')[0])}
+    </button>`).join('')
+    + `<button data-day="all" aria-pressed="true" style="background:var(--secondary);color:var(--secondary-foreground)">แสดงทั้งหมด</button>`;
+
+  $('#legend').addEventListener('click', e => {
+    const btn = e.target.closest('button'); if(!btn) return;
+    if(btn.dataset.day === 'all'){
+      DAYS.forEach(d => { layers[d.n].addTo(map);
+        $(`#legend button[data-day="${d.n}"]`).setAttribute('aria-pressed','true'); });
+      return;
+    }
+    const n = +btn.dataset.day, on = btn.getAttribute('aria-pressed') === 'true';
+    btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+    on ? map.removeLayer(layers[n]) : layers[n].addTo(map);
+  });
+}
+
+/* ===================== TABS ===================== */
+const SEC = { plan:'#secPlan', map:'#secMap', all:'#secAll', how:'#secHow' };
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t)));
+  Object.entries(SEC).forEach(([k, sel]) => { $(sel).hidden = (k !== t.dataset.sec); });
+  if(t.dataset.sec === 'map') renderMap();
+}));
+
+renderPlan();
+renderTable();
+</script>
+</body>
+</html>
