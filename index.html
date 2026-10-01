@@ -221,6 +221,30 @@ tr.closed td{color:var(--muted-foreground)}
   font:600 13px/1 var(--font-mono);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
 .leaflet-popup-content{font-family:var(--font-sans);font-size:var(--text-sm);line-height:var(--leading-ui);margin:12px 14px}
 .leaflet-popup-content b{font-size:var(--text-base)}
+.leaflet-tooltip.lbl{font-family:var(--font-sans);font-size:12px;font-weight:600;line-height:1.35;
+  background:var(--card);color:var(--card-foreground);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:2px 6px;box-shadow:var(--shadow-sm);white-space:nowrap}
+.leaflet-tooltip-right.lbl::before{border-right-color:var(--border)}
+.leaflet-tooltip-left.lbl::before{border-left-color:var(--border)}
+
+/* ---------- route per day ---------- */
+.route{display:grid;gap:var(--space-4);padding:var(--space-4);border-bottom:1px solid var(--border);background:var(--muted)}
+@media(min-width:840px){.route{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
+.mini{height:280px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--card);z-index:1}
+@media(min-width:840px){.mini{height:360px}}
+.route-title{font-weight:600;margin-bottom:var(--space-3);line-height:var(--leading-ui)}
+.route-title .meta{display:block;font-weight:400;font-family:var(--font-mono)}
+.steps{list-style:none;margin-bottom:var(--space-3)}
+.step{display:grid;grid-template-columns:32px 1fr;gap:var(--space-3);align-items:start}
+.step-dot{width:32px;height:32px;border-radius:var(--radius-full);display:grid;place-items:center;
+  font:600 14px/1 var(--font-mono)}
+.step-name{display:block;font-weight:600;line-height:var(--leading-tight);padding-top:5px;color:var(--foreground);text-decoration:none}
+.step-name:hover{text-decoration:underline}
+.step-meta{font-size:var(--text-xs);color:var(--muted-foreground);line-height:var(--leading-ui)}
+.leg{display:grid;grid-template-columns:32px 1fr;gap:var(--space-3);min-height:44px}
+.leg::before{content:"";justify-self:center;width:3px;border-radius:2px;background:currentColor;opacity:.55}
+.leg span{align-self:center;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--muted-foreground)}
+.stop{scroll-margin-top:56px}
 
 /* ---------- checklist ---------- */
 .cards{display:grid;gap:var(--space-4)}
@@ -237,7 +261,8 @@ section[hidden]{display:none!important}
 footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:var(--space-4)}
 
 @media print{
-  .tabs,.legend,.actions,.back,#map,.tick{display:none!important}
+  .tabs,.legend,.actions,.back,#map,.tick,.leaflet-control-zoom{display:none!important}
+  .route{break-inside:avoid}
   section[hidden]{display:block!important}
   body{background:#fff;color:#000;padding:0}
   .day,.panel,.tablewrap,.stat{box-shadow:none;break-inside:avoid}
@@ -573,13 +598,72 @@ const gmapPin  = b => b.gmap || `https://www.google.com/maps/search/?api=1&query
 const colorLine = (b,i) => ITEMS[i].colors.map((c,k) => `${c} ${nf(b.c[i][k])}`).join(' · ');
 const telHref  = t => 'tel:' + t.replace(/[^0-9+]/g, '');
 
-function gmapRoute(n){
-  const seen = new Set();
-  const s = stopsOf(n).filter(b => {          // สำนักงานกับสุขุมวิทอยู่พิกัดเดียวกัน นับเป็นจุดเดียว
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* จุดจอดจริงของวัน — สาขาที่อยู่พิกัดเดียวกัน (สำนักงาน + สุขุมวิท) รวมเป็นจุดเดียว */
+function pointsOf(n){
+  const m = new Map();
+  stopsOf(n).forEach(b => {
     const k = `${b.lat},${b.lng}`;
-    if(seen.has(k)) return false;
-    seen.add(k); return true;
+    (m.get(k) || m.set(k, []).get(k)).push(b);
   });
+  return [...m.values()];
+}
+
+function pinIcon(n, label, size = 26){
+  return L.divIcon({
+    className:'', iconSize:[size,size], iconAnchor:[size/2,size/2], popupAnchor:[0,-size/2-2],
+    html:`<div class="pin" style="width:${size}px;height:${size}px;background:${css(`--d${n}`)};color:${css(`--d${n}-fg`)}">${label}</div>`
+  });
+}
+
+/* เส้นทางตามถนนจริงจาก OSRM (OpenStreetMap) — จำไว้ในเครื่อง พิกัดเปลี่ยนคีย์ก็เปลี่ยนเอง */
+const routeCache = {};
+function fetchRoute(n){
+  if(routeCache[n]) return routeCache[n];
+  const pts = pointsOf(n).map(g => g[0]);
+  if(pts.length < 2) return routeCache[n] = Promise.resolve(null);
+  const coords = pts.map(b => `${b.lng},${b.lat}`).join(';');
+  const key = 'phufa-route-' + coords;
+  try {
+    const hit = localStorage.getItem(key);
+    if(hit) return routeCache[n] = Promise.resolve(JSON.parse(hit));
+  } catch(e) {}
+  return routeCache[n] = fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`)
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(j => {
+      const rt = j.routes && j.routes[0];
+      if(!rt) throw j.code;
+      const out = {
+        line: rt.geometry.coordinates.map(([x,y]) => [+y.toFixed(5), +x.toFixed(5)]),
+        legs: rt.legs.map(l => ({ km:l.distance/1000, min:l.duration/60 })),
+      };
+      try { localStorage.setItem(key, JSON.stringify(out)); } catch(e) {}
+      return out;
+    })
+    .catch(() => null);
+}
+
+/* วาดเส้นทางของวัน: เส้นประตรงๆ ก่อน แล้วแทนด้วยเส้นถนนจริงเมื่อโหลดเสร็จ */
+function drawRoute(n, group){
+  const pts = pointsOf(n).map(g => [g[0].lat, g[0].lng]);
+  if(pts.length < 2) return Promise.resolve(null);
+  const color = css(`--d${n}`);
+  const straight = L.polyline(pts, { color, weight:3, opacity:.7, dashArray:'6 6' }).addTo(group);
+  return fetchRoute(n).then(r => {
+    if(!r) return null;
+    group.removeLayer(straight);
+    L.polyline(r.line, { color:css('--card'), weight:8, opacity:.9 }).addTo(group);
+    L.polyline(r.line, { color, weight:4, opacity:.95 }).addTo(group);
+    return r;
+  });
+}
+
+const fmtKm  = km => `${km < 10 ? km.toFixed(1) : Math.round(km)} กม.`;
+const fmtMin = m  => { m = Math.max(5, Math.round(m/5)*5); return m >= 60 ? `${Math.floor(m/60)} ชม. ${m%60 ? m%60 + ' นาที' : ''}`.trim() : `${m} นาที`; };
+
+function gmapRoute(n){
+  const s = pointsOf(n).map(g => g[0]);
   if(!s.length) return '#';
   const dest = s[s.length-1];
   const wp = s.slice(0,-1).map(b => `${b.lat},${b.lng}`).join('|');
@@ -596,6 +680,81 @@ function saveDone(){
   $('#sDone').textContent = Object.values(done).filter(Boolean).length;
 }
 
+/* ===================== RENDER: ROUTE (แผนที่ + ลำดับการวิ่งรายวัน) ===================== */
+function routeBlock(n, list){
+  const pts = pointsOf(n);
+  const parked = list.filter(b => b.offmap).map(b => b.name.replace(/\s*\(.*\)$/, ''));
+  const steps = pts.map((gr, i) => {
+    const b = gr[0];
+    const qty = gr.reduce((s,x) => s + total(x), 0);
+    const extra = i === 0 && parked.length ? ` · ฝากของ${parked.join(' + ')}ไว้ที่นี่` : '';
+    return `
+      <li class="step">
+        <span class="step-dot" style="background:${dayColor(n)};color:${dayFg(n)}">${i+1}</span>
+        <div>
+          <a class="step-name" href="#stop-${b.id}">${gr.map(x => esc(x.name)).join(' + ')}</a>
+          <div class="step-meta">ถึง ${esc(b.eta)} · ${nf(qty)} ชิ้น${esc(extra)}</div>
+        </div>
+      </li>`
+      + (i < pts.length - 1
+        ? `<li class="leg" style="color:${dayColor(n)}"><span data-leg="${n}-${i}">↓ ขับต่อไปจุดที่ ${i+2}</span></li>`
+        : '');
+  }).join('');
+  return `
+    <div class="route">
+      <div class="mini" id="mini-${n}" aria-label="แผนที่เส้นทางวันที่ ${n}"></div>
+      <div>
+        <p class="route-title">ลำดับการวิ่ง
+          <span class="meta" id="rt-${n}">${pts.length > 1 ? `${pts.length} จุด · กำลังคำนวณระยะทาง…` : 'จุดเดียว ลงของจบในที่เดียว'}</span></p>
+        <ol class="steps">${steps}</ol>
+        ${pts.length > 1 ? `<p class="meta">เวลาขับคำนวณจากถนนใน OpenStreetMap <b>ไม่รวมรถติด</b> — ช่วงเช้า/เย็นในกรุงเทพฯ เผื่อเพิ่ม 1.5–2 เท่า</p>` : ''}
+      </div>
+    </div>`;
+}
+
+const minis = [];
+function renderMiniMaps(){
+  DAYS.forEach(d => {
+    const el = document.getElementById(`mini-${d.n}`);
+    if(!el) return;
+    const pts = pointsOf(d.n);
+    const m = L.map(el, { scrollWheelZoom:false, dragging:!L.Browser.mobile, tap:false, zoomSnap:.25 });
+    minis.push(m);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(m);
+    const g = L.layerGroup().addTo(m);
+    pts.forEach((gr, i) => {
+      const b = gr[0];
+      // มีจุดอื่นอยู่ใกล้ๆ ทางขวา (เช่น สยามดิสฯ กับบิ๊กซีราชดำริ) → ย้ายป้ายชื่อไปซ้ายกันทับกัน
+      const crowded = pts.some(o => Math.abs(o[0].lat - b.lat) < .01 && o[0].lng - b.lng > 0 && o[0].lng - b.lng < .03);
+      L.marker([b.lat, b.lng], { icon:pinIcon(d.n, i+1, 30), title:gr.map(x => x.name).join(' + ') })
+        .addTo(g)
+        .bindTooltip(`${i+1}. ${esc(gr.map(x => x.name).join(' + '))}`,
+                     { permanent:true, direction:crowded ? 'left' : 'right', offset:[crowded ? -14 : 14, 0], className:'lbl' })
+        .on('click', () => document.getElementById(`stop-${b.id}`).scrollIntoView({ behavior:'smooth' }));
+    });
+    const ll = pts.map(gr => [gr[0].lat, gr[0].lng]);
+    if(ll.length === 1) m.setView(ll[0], 16);
+    else m.fitBounds(ll, { padding:[40,40] });
+
+    drawRoute(d.n, g).then(r => {
+      const head = $(`#rt-${d.n}`);
+      if(!r){
+        if(pts.length > 1) head.textContent = `${pts.length} จุด · โหลดระยะทางไม่ได้ (เส้นประ = ลำดับการวิ่ง)`;
+        return;
+      }
+      m.fitBounds(L.latLngBounds(r.line), { padding:[30,30] });
+      const km = sum(r.legs.map(l => l.km)), min = sum(r.legs.map(l => l.min));
+      head.textContent = `${pts.length} จุด · รวม ${fmtKm(km)} · ขับประมาณ ${fmtMin(min)}`;
+      r.legs.forEach((l, i) => {
+        const s = document.querySelector(`[data-leg="${d.n}-${i}"]`);
+        if(s) s.textContent = `↓ ${fmtKm(l.km)} · ~${fmtMin(l.min)}`;
+      });
+    });
+  });
+}
+
 /* ===================== RENDER: PLAN ===================== */
 function renderPlan(){
   $('#days').innerHTML = DAYS.map(d => {
@@ -608,7 +767,7 @@ function renderPlan(){
       const tel = b.tel.map(t =>
         `<a href="${telHref(t)}" class="mono">${esc(t)}</a>`).join(' · ') || '—';
       return `
-      <div class="stop${done[b.id] ? ' done' : ''}" data-id="${b.id}">
+      <div class="stop${done[b.id] ? ' done' : ''}" id="stop-${b.id}" data-id="${b.id}">
         <input class="tick" type="checkbox" id="ck-${b.id}" ${done[b.id] ? 'checked' : ''}
                aria-label="ส่งแล้ว: ${esc(b.name)}">
         <div>
@@ -646,6 +805,7 @@ function renderPlan(){
         <a class="btn btn-primary" href="${gmapRoute(d.n)}" target="_blank" rel="noopener">เส้นทางทั้งวัน ↗</a>
         <p class="meta">${esc(d.zone)} · รวม <b class="mono">${nf(qty)}</b> ชิ้น — ${esc(d.note)}</p>
       </div>
+      ${routeBlock(d.n, list)}
       ${stops}
     </article>`;
   }).join('');
@@ -703,25 +863,16 @@ function renderMap(){
   DAYS.forEach(d => {
     const g = L.layerGroup().addTo(map);
     layers[d.n] = g;
-    const byCoord = new Map();                  // รวมสาขาที่อยู่พิกัดเดียวกันให้เป็นหมุดเดียว
-    stopsOf(d.n).forEach(b => {
-      const k = `${b.lat},${b.lng}`;
-      (byCoord.get(k) || byCoord.set(k, []).get(k)).push(b);
-    });
-    [...byCoord.values()].forEach(group => {
+    pointsOf(d.n).forEach((group, i) => {
       const b = group[0];
       bounds.push([b.lat, b.lng]);
-      const icon = L.divIcon({
-        className:'', iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-14],
-        html:`<div class="pin" style="background:${getComputedStyle(document.documentElement).getPropertyValue(`--d${d.n}`)};
-              color:${getComputedStyle(document.documentElement).getPropertyValue(`--d${d.n}-fg`)}">${b.seq}</div>`
-      });
+      const icon = pinIcon(d.n, i+1);
       const names = group.map(x => esc(x.name)).join(' + ');
       const qty   = group.reduce((t2,x) => t2 + total(x), 0);
       const tels  = [...new Set(group.flatMap(x => x.tel))];
       L.marker([b.lat, b.lng], { icon, title:names }).addTo(g).bindPopup(`
         <b>${names}</b><br>
-        <span style="color:${dayColor(d.n)};font-weight:600">วันที่ ${d.n} · จุดที่ ${b.seq} · ${esc(b.eta)}</span><br>
+        <span style="color:${dayColor(d.n)};font-weight:600">วันที่ ${d.n} · จุดที่ ${i+1} · ${esc(b.eta)}</span><br>
         ${esc(b.floor)}<br>
         ${esc(b.hours)}<br>
         ${tels.map(t => `<a href="${telHref(t)}">${esc(t)}</a>`).join(' · ')}<br>
@@ -729,14 +880,7 @@ function renderMap(){
         <a href="${gmapPin(b)}" target="_blank" rel="noopener">Google Maps ↗</a>
       `);
     });
-    // เส้นเชื่อมลำดับการเดินทางของวันนั้น
-    const line = [...byCoord.values()].map(gr => [gr[0].lat, gr[0].lng]);
-    if(line.length > 1){
-      L.polyline(line, {
-        color:getComputedStyle(document.documentElement).getPropertyValue(`--d${d.n}`),
-        weight:3, opacity:.7, dashArray:'6 6'
-      }).addTo(g);
-    }
+    drawRoute(d.n, g);                          // เส้นทางตามถนนของวันนั้น
   });
   map.fitBounds(bounds, { padding:[36,36] });
 
@@ -766,9 +910,11 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
   document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t)));
   Object.entries(SEC).forEach(([k, sel]) => { $(sel).hidden = (k !== t.dataset.sec); });
   if(t.dataset.sec === 'map') renderMap();
+  if(t.dataset.sec === 'plan') minis.forEach(m => m.invalidateSize());
 }));
 
 renderPlan();
+renderMiniMaps();
 renderTable();
 </script>
 </body>
