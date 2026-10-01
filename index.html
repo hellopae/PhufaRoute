@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ภูฟ้า — แผนส่งสิ่งพิมพ์ 2569</title>
+<title>ภูฟ้า — แผนส่งสิ่งพิมพ์ 2570</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -185,7 +185,7 @@ header{border-bottom:1px solid var(--border);background:var(--card)}
 .facts{display:grid;gap:var(--space-2);font-size:var(--text-sm);line-height:var(--leading-ui)}
 .fact{display:grid;grid-template-columns:5.5rem 1fr;gap:var(--space-3)}
 .fact dt{color:var(--muted-foreground);font-size:var(--text-xs);padding-top:2px}
-.fact dd{color:var(--card-foreground)}
+.fact dd{color:var(--card-foreground);min-width:0;overflow-wrap:anywhere}
 .tags{display:flex;flex-wrap:wrap;gap:var(--space-2);margin-top:var(--space-3)}
 .tag{font-size:var(--text-xs);font-weight:600;padding:2px var(--space-2);border-radius:var(--radius-sm);
   background:var(--muted);color:var(--muted-foreground);line-height:var(--leading-ui)}
@@ -253,7 +253,7 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
       <div class="mark">ภฟ</div>
       <div>
         <div class="kicker">TANAPAT · Delivery Plan</div>
-        <h1>ภูฟ้า — แผนส่งสิ่งพิมพ์ 2569</h1>
+        <h1>ภูฟ้า — แผนส่งสิ่งพิมพ์ 2570</h1>
       </div>
     </div>
     <a class="back" href="https://hellopae.github.io/AGAPAEagent/" target="_blank" rel="noopener">← แดชบอร์ด AGAPAE</a>
@@ -272,7 +272,7 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
 <main class="wrap">
 
   <div class="stats">
-    <div class="stat"><b class="mono" id="sBranch">18</b><span>สาขาที่ต้องส่ง (ปิดปรับปรุง 2)</span></div>
+    <div class="stat"><b class="mono" id="sBranch">19</b><span>สาขาที่ต้องส่ง (ปิดปรับปรุง 1)</span></div>
     <div class="stat"><b class="mono" id="sQty">15,000</b><span>ชิ้นรวม (สคส. + สมุด 2 แบบ)</span></div>
     <div class="stat"><b class="mono">5</b><span>วันเดินสาย (ยุบเหลือ 4 ได้)</span></div>
     <div class="stat"><b class="mono" id="sDone">0</b><span>ส่งแล้ว (กดติ๊กในแผน)</span></div>
@@ -295,28 +295,28 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
     <div class="legend" id="legend"></div>
     <div id="map"></div>
     <p class="meta" style="margin-top:var(--space-3)">
-      หมุดวางจากพิกัดจริงของอาคาร/ห้าง (OpenStreetMap) — สาขาจตุจักรเป็นพิกัดโดยประมาณ เพราะร้านอยู่ในตลาดนัดโครงการ 24
+      หมุดวางตามพิกัดร้านใน Google Maps ที่ภูฟ้าลิงก์ไว้หน้าเวปสาขา — ยกเว้นบิ๊กซี พระราม 4 ที่ลิงก์ของภูฟ้าชี้ผิดไปราชดำริ จึงใช้พิกัดตัวห้างแทน
       กดที่หมุดเพื่อดูรายละเอียดและเปิด Google Maps
     </p>
   </section>
 
   <!-- ============ ALL BRANCHES ============ -->
   <section id="secAll" hidden>
-    <h2 class="sec-title">ทุกสาขา · 20 รายการตามตารางสิ่งพิมพ์ 69</h2>
+    <h2 class="sec-title">ทุกสาขา · 20 รายการตามตารางสิ่งพิมพ์ 2570</h2>
     <div class="tablewrap">
       <table>
         <thead>
           <tr>
             <th>#</th><th>สาขา</th><th>วัน</th><th>ชั้น</th><th>เวลาเปิด</th>
-            <th>โทร</th><th class="num">สคส.</th><th class="num">สมุดเล็ก</th><th class="num">สมุดใหญ่</th><th class="num">รวม</th>
+            <th>โทร</th><th>แผนที่</th><th class="num">สคส.</th><th class="num">สมุดเล็ก</th><th class="num">สมุดใหญ่</th><th class="num">รวม</th>
           </tr>
         </thead>
         <tbody id="allRows"></tbody>
         <tfoot>
           <tr>
-            <td colspan="6"><b>รวมทั้งหมด</b></td>
-            <td class="num"><b>10,000</b></td><td class="num"><b>3,000</b></td>
-            <td class="num"><b>2,000</b></td><td class="num"><b>15,000</b></td>
+            <td colspan="7"><b>รวมทั้งหมด</b></td>
+            <td class="num"><b id="tCard">—</b></td><td class="num"><b id="tSmall">—</b></td>
+            <td class="num"><b id="tBig">—</b></td><td class="num"><b id="tAll">—</b></td>
           </tr>
         </tfoot>
       </table>
@@ -341,10 +341,10 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
       <div class="panel">
         <h3>ของที่ต้องมีติดรถ</h3>
         <ul>
-          <li>ใบส่งของ 2 ชุดต่อสาขา (สาขาเก็บ 1 / เซ็นคืนเรา 1) — 18 สาขา = 36 ใบ</li>
+          <li>ใบส่งของ 2 ชุดต่อสาขา (สาขาเก็บ 1 / เซ็นคืนเรา 1) — 19 สาขา = 38 ใบ</li>
           <li>บัตรประชาชน + ใบขับขี่ (ห้างส่วนใหญ่ขอแลกบัตรที่ป้อม)</li>
           <li>รถเข็นพับได้ 1 คัน — สัมมากรกับจตุจักรต้องเดินไกล</li>
-          <li>เทปใส + คัตเตอร์ + ปากกาเมจิก เขียนชื่อสาขาบนกล่อง</li>
+          <li>เทปใส + คัตเตอร์ + ปากกาเมจิก เขียนชื่อสาขาและ<b>สีของในกล่อง</b>บนกล่อง (ปีนี้แยกจำนวนตามสี)</li>
           <li>พลาสติกคลุมกันฝน (ส่งช่วงหน้าฝนกล่องสคส.เสียง่าย)</li>
           <li>เงินสดค่าที่จอดรถ + เหรียญ</li>
         </ul>
@@ -358,17 +358,19 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
           <li><b>สัมมากร เพลส</b> — จอดชั้น 3 แล้วเดินข้ามมาตึกเอ ชั้น 2</li>
           <li><b>จตุจักร ปิดวันจันทร์</b> (เปิด อังคาร–อาทิตย์) — อย่าจัดวันสายเหนือตรงวันจันทร์</li>
           <li><b>สำนักงาน</b> เปิด จ.–ศ. 08:30–17:30 — เสาร์-อาทิตย์ส่งไม่ได้</li>
+          <li><b>กรมศิลปากร</b> เปิด 09:00 ปิด <b>16:00</b> — ปิดเร็วที่สุด ไปเป็นจุดแรกของวัน 4</li>
         </ul>
       </div>
       <div class="panel">
         <h3>หัวหิน · น่าน · สาขาปิด</h3>
         <ul>
-          <li><b>หัวหิน (490 ชิ้น)</b> และ <b>น่าน (490 ชิ้น)</b> ไม่ต้องขับไปเอง —
+          <li><b>หัวหิน (340 ชิ้น)</b> และ <b>น่าน (340 ชิ้น)</b> ไม่ต้องขับไปเอง —
               ตามบันทึกเดิมให้ <b>ส่งรวมไว้ที่สาขาสุขุมวิท/สำนักงาน</b> แล้วให้ภูฟ้ากระจายต่อ (ยืนยันกับสำนักงานอีกครั้ง)</li>
-          <li><b>กรมศิลปากร</b> และ <b>กำแพงเพชร</b> — ตารางปี 69 ระบุ “ปิดปรับปรุง” จำนวนเป็น 0 ไม่ต้องเตรียมของ</li>
+          <li><b>กำแพงเพชร</b> — ตารางปี 2570 ระบุ “ปิดปรับปรุง” จำนวนเป็น 0 ไม่ต้องเตรียมของ</li>
+          <li><b>กรมศิลปากร กลับมาเปิดแล้ว</b> (ปี 69 ปิดปรับปรุง) — ปีนี้ส่ง 390 ชิ้น จัดไว้วันที่ 4 ก่อนข้ามไปศิริราช</li>
           <li><b>สำนักงาน กับ สาขาสุขุมวิท อยู่ตึกเดียวกัน</b> (123 ปากซอยสุขุมวิท 7) — ไปครั้งเดียวจบ 2 รายการ
               แต่แยกใบส่งของคนละใบ เพราะจำนวนไม่เท่ากัน</li>
-          <li>วันแรกจึงเป็นวันที่หนักที่สุด: 1,900 + 1,440 + 490 + 490 = <b>4,320 ชิ้น</b> ที่จุดเดียว</li>
+          <li>วันแรกจึงลงของจุดเดียวเยอะที่สุด: 1,780 + 1,620 + 340 + 340 = <b>4,080 ชิ้น</b></li>
         </ul>
       </div>
       <div class="panel">
@@ -380,6 +382,7 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
               รามาเปิดตั้งแต่ 07:00 ส่งเช้าตรู่ได้เปรียบที่สุด</li>
           <li><b>ตลาดนัดจตุจักร</b>: รถเข้าซอยยาก จอดฝั่งกำแพงเพชร 2 แล้วเข็นเข้าไป
               จุดสังเกตคือ MRT กำแพงเพชร ประตู 2</li>
+          <li><b>หน่วยราชการ</b> (กรมศิลปากร): อยู่ถนนหน้าพระธาตุ ใกล้สนามหลวง ที่จอดหายาก โทรถามก่อนว่าจอดลงของตรงไหนได้</li>
           <li><b>อาคารสำนักงาน</b> (จามจุรี, สำนักงานภูฟ้า): จามจุรีมีจุดรับของชั้น B ต้องลงทะเบียน
               ส่วนสำนักงานภูฟ้าเป็นตึกของภูฟ้าเอง จอดหน้าตึกได้</li>
         </ul>
@@ -387,11 +390,11 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
       <div class="panel">
         <h3>ที่มาของข้อมูล</h3>
         <ul>
-          <li>จำนวนงานพิมพ์ — ไฟล์ <span class="mono">ร่างตารางสิ่งพิมพ์ 69.pdf</span> (สคส. 10,000 / สมุดเล็ก 3,000 / สมุดใหญ่ 2,000)</li>
+          <li>จำนวนงานพิมพ์ — ไฟล์ <span class="mono">ร่างตารางสิ่งพิมพ์ 2570.xls</span> (สคส. 10,000 / สมุดเล็ก 3,000 / สมุดใหญ่ 2,000 แยกตามสี)</li>
           <li>ชั้น เวลารับของ ที่จอดรถ การจัดกลุ่ม ซ้าย-กลาง-ขวา — Google Doc ของพี่เป้</li>
           <li>ที่อยู่ เบอร์โทร เวลาเปิด-ปิด — <a href="https://www.phufa.org/branch-all/" target="_blank" rel="noopener">phufa.org/branch-all</a>
               และหน้าติดต่อ <a href="https://www.phufa.org/contact/" target="_blank" rel="noopener">phufa.org/contact</a></li>
-          <li>พิกัดหมุด — OpenStreetMap / Nominatim</li>
+          <li>พิกัดหมุดและลิงก์แผนที่ — Google Maps ที่ภูฟ้าลิงก์ไว้ในหน้าสาขา (บิ๊กซี พระราม 4 ใช้พิกัดจาก OpenStreetMap)</li>
           <li>จุดแวะเพิ่มในเอกสารเดิม (<b>Modernform</b>, <b>คุณเล็ก</b>) ยังไม่มีที่อยู่ จึงยังไม่ใส่หมุด —
               บอกที่อยู่มาแล้วจะเพิ่มให้</li>
         </ul>
@@ -400,7 +403,7 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
   </section>
 
   <footer>
-    <p class="meta">อัปเดต 4 ก.ย. 2569 · สร้างโดย AGAPAE AI Studio · ติ๊กช่องที่ส่งแล้วจะจำไว้ในเครื่องนี้</p>
+    <p class="meta">อัปเดต 1 ต.ค. 2569 (ตารางปี 2570) · สร้างโดย AGAPAE AI Studio · ติ๊กช่องที่ส่งแล้วจะจำไว้ในเครื่องนี้</p>
   </footer>
 </main>
 
@@ -409,13 +412,13 @@ footer{border-top:1px solid var(--border);margin-top:var(--space-7);padding-top:
 /* ===================== DATA ===================== */
 const DAYS = [
   { n:1, title:"คลังกลาง — สำนักงาน / สุขุมวิท", zone:"วัฒนา (ซ.สุขุมวิท 7)",
-    note:"จุดเดียวแต่ของเยอะที่สุด 4,320 ชิ้น รวมของหัวหินกับน่านที่ฝากกระจายต่อ · ต้องเป็นวันจันทร์–ศุกร์เท่านั้น" },
+    note:"จุดเดียวแต่ลงของ 4,080 ชิ้น รวมของหัวหินกับน่านที่ฝากกระจายต่อ · ต้องเป็นวันจันทร์–ศุกร์เท่านั้น" },
   { n:2, title:"สายเหนือ — รังสิต → วัชรพล → จตุจักร", zone:"ปทุมธานี · บางเขน · จตุจักร",
     note:"ไล่จากเหนือลงใต้ ออกเช้าให้ถึงฟิวเจอร์พาร์คก่อน 10 โมง · ห้ามจัดวันจันทร์ (จตุจักรปิด)" },
   { n:3, title:"ใจกลางเมือง — รามา → สามย่าน → ราชประสงค์ → พระราม 4", zone:"ราชเทวี · ปทุมวัน · คลองเตย",
-    note:"วันนี้ของเยอะรองลงมา 4,260 ชิ้น · จามจุรีต้องถึงก่อน 10 โมง ไม่งั้นต้องรอถึงบ่าย 2" },
-  { n:4, title:"ฝั่งธน / ตะวันตก — ศิริราช → บางใหญ่ → ไอคอนสยาม", zone:"บางกอกน้อย · บางกรวย · คลองสาน",
-    note:"ไอคอนสยามรับของบ่าย 2–5 เท่านั้น เลยวิ่งบางใหญ่ช่วงสายแล้วค่อยย้อนเข้าไอคอน" },
+    note:"วันที่ของเยอะที่สุด 4,330 ชิ้น · จามจุรีต้องถึงก่อน 10 โมง ไม่งั้นต้องรอถึงบ่าย 2" },
+  { n:4, title:"เกาะรัตนโกสินทร์ / ฝั่งธน — กรมศิลป์ → ศิริราช → บางใหญ่ → ไอคอนสยาม", zone:"พระนคร · บางกอกน้อย · บางกรวย · คลองสาน",
+    note:"เริ่มกรมศิลป์ตอนเปิด 9 โมง (ปิด 4 โมงเย็น) แล้วข้ามสะพานปิ่นเกล้าไปศิริราช · ไอคอนสยามรับของบ่าย 2–5 เท่านั้น เลยวิ่งบางใหญ่ช่วงสายแล้วค่อยย้อนเข้าไอคอน" },
   { n:5, title:"ตะวันออก — พาราไดซ์ พาร์ค → สัมมากร เพลส", zone:"ประเวศ · สะพานสูง",
     note:"วันสบายที่สุด 2 จุด · พาราไดซ์ต้องก่อนบ่าย 2 · ถ้าอยากจบใน 4 วัน ยุบวันนี้ไปต่อท้ายวันที่ 1 ได้ (สุขุมวิท → พาราไดซ์ → สัมมากร)" },
 ];
@@ -425,112 +428,118 @@ const B = [
     addr:"123 ปากซอยสุขุมวิท 7 ถ.สุขุมวิท แขวงคลองเตยเหนือ เขตวัฒนา กทม. 10110",
     tel:["0-2655-6242-3"], hours:"จันทร์–ศุกร์ 08:30–17:30", days:"จ–ศ",
     how:"ตึกของภูฟ้าเอง จอดหน้าตึกได้ ไม่ต้องแลกบัตรห้าง", reg:"none",
-    lat:13.742837, lng:100.555203, q:[1320,340,240],
-    tags:[["gold","ของเยอะสุด 1,900 ชิ้น"],["warn","จ–ศ เท่านั้น"]] },
+    lat:13.7411633, lng:100.5548305, gmap:"https://maps.app.goo.gl/1ittfGECEiVGugKQ9", c:[[300,300,300,300],[170,170],[120,120]],
+    tags:[["gold","ของเยอะสุด 1,780 ชิ้น"],["warn","จ–ศ เท่านั้น"]] },
   { id:"sukhumvit", day:1, seq:2, eta:"08:30", name:"สาขาสุขุมวิท", floor:"ตึกเดียวกับสำนักงาน",
     addr:"123 สุขุมวิทซอย 7 ถ.สุขุมวิท แขวงคลองเตยเหนือ เขตวัฒนา กทม. 10110",
     tel:["02-650-3311"], hours:"จ–ศ 08:00–18:00 · ส–อา และวันหยุด 09:30–18:00", days:"ทุกวัน",
     how:"อยู่ตึกเดียวกับสำนักงาน ลงของรอบเดียว แต่แยกใบส่งของคนละใบ", reg:"none",
-    lat:13.742837, lng:100.555203, q:[920,320,200],
+    lat:13.7411633, lng:100.5548305, gmap:"https://maps.app.goo.gl/1ittfGECEiVGugKQ9", c:[[500,200,200,200],[160,160],[100,100]],
     tags:[["ok","ลงพร้อมสำนักงาน"]] },
   { id:"huahin", day:1, seq:3, eta:"—", name:"หัวหิน (ฝากส่งต่อ)", floor:"ห้อง M212 ชั้น 2 หัวหิน มาร์เก็ต วิลเลจ",
     addr:"2234/1 อาคารหัวหินมาร์เก็ตวิลเลจ ถ.เพชรเกษม อ.หัวหิน จ.ประจวบคีรีขันธ์ 77110",
     tel:["032-526-127"], hours:"ทุกวัน 10:30–20:00", days:"ทุกวัน",
     how:"ไม่ต้องขับไปเอง — ฝากไว้ที่สำนักงาน/สุขุมวิทให้ภูฟ้ากระจายต่อ (ยืนยันกับสำนักงานก่อน)", reg:"none",
-    lat:12.568590, lng:99.958420, offmap:true, q:[400,50,40],
+    lat:12.5576873, lng:99.9593583, gmap:"https://maps.app.goo.gl/fW4xdyRzGBXvMj8M8", offmap:true, c:[[100,50,50,50],[25,25],[20,20]],
     tags:[["ok","ฝากที่สำนักงาน"]] },
   { id:"nan", day:1, seq:4, eta:"—", name:"น่าน (ฝากส่งต่อ)", floor:"ร้านเดี่ยว",
     addr:"229 ถ.มะโน ต.ในเวียง อ.เมืองน่าน จ.น่าน 55000",
     tel:["054-050-117"], hours:"ทุกวัน 08:00–17:00", days:"ทุกวัน",
     how:"ไม่ต้องขับไปเอง — ฝากไว้ที่สำนักงาน/สุขุมวิทให้ภูฟ้ากระจายต่อ (ยืนยันกับสำนักงานก่อน)", reg:"none",
-    lat:18.774160, lng:100.771080, offmap:true, q:[400,50,40],
+    lat:18.7749922, lng:100.7779432, gmap:"https://maps.app.goo.gl/rAh379HjyPiEN3Hv6", offmap:true, c:[[100,50,50,50],[25,25],[20,20]],
     tags:[["ok","ฝากที่สำนักงาน"]] },
 
   { id:"future", day:2, seq:1, eta:"09:00", name:"ฟิวเจอร์พาร์ค รังสิต", floor:"โซน Zpell ชั้น 1",
     addr:"ศูนย์การค้าฟิวเจอร์พาร์ค รังสิต ถ.พหลโยธิน อ.ธัญบุรี จ.ปทุมธานี 12130",
     tel:["02-150-9088"], hours:"จ–ศ 10:30–21:00 · ส–อา และวันหยุด 10:00–21:00", days:"ทุกวัน",
     how:"เข้าประตูรับสินค้าก่อนห้างเปิด ใช้ลิฟต์ขนของขึ้นโซน Zpell ชั้น 1", reg:"mall",
-    lat:13.988952, lng:100.618440, q:[520,150,120],
+    lat:13.9881135, lng:100.6181046, gmap:"https://maps.app.goo.gl/MvdnvjkpECj7kWE96", c:[[200,100,100,100],[75,75],[60,60]],
     tags:[["warn","ต้องถึงก่อน 10:00"],["bad","ไกลสุด ออกจากบ้าน 07:30"]] },
   { id:"watcharaphon", day:2, seq:2, eta:"10:45", name:"เดอะแพลทินั่ม เพลส วัชรพล", floor:"ชั้น 2",
     addr:"ศูนย์การค้าเดอะ แพลททินั่ม เพลส ถ.วัชรพล เขตบางเขน กทม. 10230",
     tel:["0-2064-2375"], hours:"ทุกวัน 09:30–18:00", days:"ทุกวัน",
     how:"ห้างชุมชนขนาดเล็ก จอดใกล้ทางเข้าแล้วเข็นขึ้นชั้น 2 ได้เลย", reg:"mall",
-    lat:13.856147, lng:100.640506, q:[400,100,80], tags:[] },
+    lat:13.8561505, lng:100.6408019, gmap:"https://maps.app.goo.gl/1K9qyNBEk8TRcVJp8", c:[[150,80,80,80],[40,40],[30,30]], tags:[] },
   { id:"bonmarche", day:2, seq:3, eta:"12:00", name:"บองมาร์เช่ มาร์เก็ตพาร์ค", floor:"ชั้น 2 โซนพลาซ่า 2",
     addr:"ศูนย์การค้าบองมาร์เช่ มาร์เก็ตพาร์ค ถ.เทศบาลสงเคราะห์ เขตจตุจักร กทม. 10900",
     tel:["0-2591-2199"], hours:"ทุกวัน 09:30–18:00", days:"ทุกวัน",
     how:"เข้าฝั่งพลาซ่า 2 จอดในลานแล้วเข็นขึ้นชั้น 2", reg:"mall",
-    lat:13.839164, lng:100.550912, q:[400,100,80], tags:[] },
+    lat:13.8388821, lng:100.5509498, gmap:"https://maps.app.goo.gl/J5aCMGmNNZ7wRYZ36", c:[[150,80,80,80],[40,40],[40,40]], tags:[] },
   { id:"chatuchak", day:2, seq:4, eta:"13:30", name:"จตุจักร", floor:"โครงการ 24 (ใกล้ MRT กำแพงเพชร ประตู 2)",
     addr:"โครงการ 24 ถ.กำแพงเพชร 2 เขตจตุจักร กทม. 10900",
     tel:["02-494-9132-3"], hours:"อังคาร–อาทิตย์ 09:30–18:00", days:"อ–อา",
     how:"รถเข้าซอยตลาดยาก จอดฝั่งกำแพงเพชร 2 แล้วเข็นเข้าไปทางประตู 2 ของ MRT กำแพงเพชร", reg:"market",
-    lat:13.799800, lng:100.549000, approx:true, q:[400,100,80],
+    lat:13.798367, lng:100.549192, gmap:"https://maps.app.goo.gl/fbqjgCgp4CGBSTBd7", c:[[150,80,80,80],[50,50],[40,40]],
     tags:[["bad","ปิดวันจันทร์"],["warn","ต้องเข็นของเข้าไปเอง"]] },
 
   { id:"rama", day:3, seq:1, eta:"08:00", name:"โรงพยาบาลรามาธิบดี", floor:"อาคารสมเด็จพระเทพรัตน์ ชั้น 1",
     addr:"270/1 ถ.พระราม 6 แขวงทุ่งพญาไท เขตราชเทวี กทม. 10400",
     tel:["02-354-5109"], hours:"จ–ศ 07:00–19:00 · เสาร์/วันหยุด 08:00–18:00 · อาทิตย์ 08:00–16:00", days:"ทุกวัน",
     how:"เปิดตั้งแต่ 07:00 — ถึงเช้าตรู่จะจอดง่ายที่สุด แลกบัตรที่ป้อม เข้าอาคารสมเด็จพระเทพรัตน์", reg:"hospital",
-    lat:13.767283, lng:100.526172, q:[520,250,130],
+    lat:13.7687178, lng:100.5281692, gmap:"https://maps.app.goo.gl/vYDBob2LKjwbZvTt8", c:[[300,100,100,100],[125,125],[65,65]],
     tags:[["ok","เปิด 07:00 เริ่มวันที่นี่"]] },
   { id:"chamchuri", day:3, seq:2, eta:"09:15", name:"จัตุรัสจามจุรี", floor:"ชั้น 1 อาคารสำนักงานจามจุรี",
     addr:"317 จัตุรัสจามจุรี ถ.พญาไท เขตปทุมวัน กทม. 10330",
     tel:["02-160-5077"], hours:"จ–ศ 07:00–20:00 · ส–อา และวันหยุด 10:00–19:00", days:"ทุกวัน",
     how:"เป็นอาคารสำนักงาน ต้องลงทะเบียนที่จุดรับของ แล้วใช้ลิฟต์ขนของขึ้นชั้น 1 ฝั่งร้าน", reg:"office",
-    lat:13.732942, lng:100.530712, q:[720,250,130],
-    tags:[["warn","ก่อน 10:00 หรือ 14:00–17:00"],["gold","1,100 ชิ้น"]] },
+    lat:13.732262, lng:100.5310319, gmap:"https://maps.app.goo.gl/hJG5YntZgFYGbWxaA", c:[[300,150,150,150],[125,125],[65,65]],
+    tags:[["warn","ก่อน 10:00 หรือ 14:00–17:00"],["gold","1,130 ชิ้น"]] },
   { id:"siamdisc", day:3, seq:3, eta:"10:30", name:"สยามดิสคัฟเวอรี่", floor:"ชั้น 3 โซน Creative Labs",
     addr:"194 ศูนย์การค้าสยามดิสคัฟเวอรี่ ถ.พระราม 1 เขตปทุมวัน กทม. 10330",
     tel:["0-2658-0208"], hours:"ทุกวัน 10:00–22:00", days:"ทุกวัน",
     how:"เข้าประตูรับสินค้าใต้ดิน ลงทะเบียนแล้วใช้ลิฟต์ขนของขึ้นชั้น 3", reg:"mall",
-    lat:13.746687, lng:100.531529, q:[520,250,120], tags:[] },
+    lat:13.746415, lng:100.531656, gmap:"https://maps.app.goo.gl/ipAFm8A4GAJZgmry7", c:[[250,100,100,100],[125,125],[60,60]], tags:[] },
   { id:"bigc-ratchadamri", day:3, seq:4, eta:"11:30", name:"บิ๊กซี ราชดำริ", floor:"ชั้น 2",
     addr:"97/11 บิ๊กซี ราชดำริ ถ.ราชดำริห์ แขวงลุมพินี เขตปทุมวัน กทม. 10330",
     tel:["02-655-5995"], hours:"ทุกวัน 10:00–20:30", days:"ทุกวัน",
     how:"ประตูรับสินค้าฝั่งหลัง แลกบัตร แล้วขึ้นลิฟต์ขนของชั้น 2", reg:"mall",
-    lat:13.747032, lng:100.540766, q:[400,100,80], tags:[] },
+    lat:13.7470642, lng:100.5409798, gmap:"https://maps.app.goo.gl/iDLTxv8MJX386YGUA", c:[[150,80,80,80],[40,40],[30,30]], tags:[] },
   { id:"bigc-rama4", day:3, seq:5, eta:"12:30", name:"บิ๊กซี เอ็กซ์ตร้า พระราม 4", floor:"ชั้น 2",
     addr:"2929 ถ.พระรามสี่ แขวงคลองตัน เขตคลองเตย กทม. 10110",
     tel:["02-661-5708","093-046-1916"], hours:"ทุกวัน 10:00–20:30", days:"ทุกวัน",
     how:"เข้าลานจอดแล้วใช้ประตูรับสินค้า ขึ้นลิฟต์ขนของชั้น 2", reg:"mall",
-    lat:13.718329, lng:100.568853, q:[520,150,120], tags:[] },
+    lat:13.718329, lng:100.568853, c:[[200,100,100,100],[75,75],[60,60]], tags:[] },
 
-  { id:"siriraj", day:4, seq:1, eta:"09:30", name:"โรงพยาบาลศิริราช", floor:"อาคารเอ ชั้น 1",
+  { id:"finearts", day:4, seq:1, eta:"09:00", name:"กรมศิลปากร", floor:"ชั้น 1 อาคารกรมศิลปากร",
+    addr:"เลขที่ 1 อาคารกรมศิลปากร ถ.หน้าพระธาตุ แขวงพระบรมมหาราชวัง เขตพระนคร กทม. 10200",
+    tel:["092-893-4518"], hours:"ทุกวัน 09:00–16:00", days:"ทุกวัน",
+    how:"กลับมาเปิดปีนี้ (ปี 69 ปิดปรับปรุง) · เป็นหน่วยราชการแถวสนามหลวง ที่จอดน้อย — โทรถามจุดจอดลงของก่อน", reg:"gov",
+    lat:13.7527999, lng:100.4910794, gmap:"https://maps.app.goo.gl/2FtQPqNejSzN4PN9A",
+    c:[[100,50,50,50],[40,40],[30,30]],
+    tags:[["gold","สาขาเปิดใหม่ปีนี้"],["warn","ปิด 16:00"]] },
+  { id:"siriraj", day:4, seq:2, eta:"10:00", name:"โรงพยาบาลศิริราช", floor:"อาคารเอ ชั้น 1",
     addr:"264/18 ถ.รถไฟ แขวงศิริราช เขตบางกอกน้อย กทม. 10700",
     tel:["02-418-3498"], hours:"ทุกวัน 09:30–18:00", days:"ทุกวัน",
     how:"ที่จอดในโรงพยาบาลเต็มเร็ว ถ้าเต็มจอดฝั่งวังหลังแล้วเข็นเข้ามา แลกบัตรที่ป้อม", reg:"hospital",
-    lat:13.757822, lng:100.485383, q:[520,150,120],
-    tags:[["warn","ที่จอดหายาก ไปเช้า"]] },
-  { id:"bangyai", day:4, seq:2, eta:"11:00", name:"โลตัส บางใหญ่", floor:"ชั้น 2",
+    lat:13.7596423, lng:100.4808892, gmap:"https://maps.app.goo.gl/nLfBSzMCRRUsuoSz6", c:[[200,100,100,100],[75,75],[60,60]],
+    tags:[["warn","ที่จอดหายาก"]] },
+  { id:"bangyai", day:4, seq:3, eta:"11:30", name:"โลตัส บางใหญ่", floor:"ชั้น 2",
     addr:"90 หมู่ 5 โลตัส บางใหญ่ ต.บางคูเวียง อ.บางกรวย จ.นนทบุรี 11130",
     tel:["02-459-2291"], hours:"ทุกวัน 10:00–20:00", days:"ทุกวัน",
     how:"ไปทางราชพฤกษ์ เข้าประตูรับสินค้าฝั่งหลัง ใช้ลิฟต์ขนของขึ้นชั้น 2", reg:"mall",
-    lat:13.824209, lng:100.410777, q:[520,150,120], tags:[] },
-  { id:"iconsiam", day:4, seq:3, eta:"14:30", name:"ไอคอนสยาม", floor:"ชั้น 5 หน้าล็อบบี้",
+    lat:13.8241251, lng:100.4101981, gmap:"https://maps.app.goo.gl/UyUeXUKwer42nkGF8", c:[[200,100,100,100],[75,75],[60,60]], tags:[] },
+  { id:"iconsiam", day:4, seq:4, eta:"14:30", name:"ไอคอนสยาม", floor:"ชั้น 5 หน้าล็อบบี้",
     addr:"299 ถ.เจริญนคร แขวงคลองต้นไทร เขตคลองสาน กทม. 10600",
     tel:["02-006-4529"], hours:"ทุกวัน 10:00–22:00", days:"ทุกวัน",
     how:"ห้างใหญ่ ระบบรับของเข้ม ต้องลงทะเบียนที่ศูนย์รับสินค้าชั้นใต้ดินก่อนเสมอ", reg:"mall",
-    lat:13.726823, lng:100.510294, q:[520,240,100],
+    lat:13.7267107, lng:100.509959, gmap:"https://maps.app.goo.gl/9RoFJ3XqGY1vk2EHA", c:[[250,100,100,100],[120,120],[50,50]],
     tags:[["warn","ก่อน 10:00 หรือ 14:00–17:00"]] },
 
   { id:"paradise", day:5, seq:1, eta:"10:30", name:"พาราไดซ์ พาร์ค", floor:"ชั้น 2 โซน C",
     addr:"61 ศูนย์การค้าพาราไดซ์ พาร์ค ถ.ศรีนครินทร์ แขวงหนองบอน เขตประเวศ กทม. 10250",
     tel:["02-780-2259"], hours:"จ–ศ 10:30–20:30 · ส–อา และวันหยุด 10:00–20:30", days:"ทุกวัน",
     how:"จอดที่ชั้น 2A แล้วเข็นเข้าโซน C ชั้น 2 ได้เลย (ตามบันทึกเดิมของพี่เป้)", reg:"mall",
-    lat:13.687029, lng:100.647541, q:[600,150,120],
+    lat:13.6869687, lng:100.6473764, gmap:"https://maps.app.goo.gl/zCYGy7XyyMYgCAKm7", c:[[250,100,100,100],[75,75],[60,60]],
     tags:[["warn","ต้องถึงก่อน 14:00"],["ok","จอดชั้น 2A"]] },
   { id:"sammakorn", day:5, seq:2, eta:"12:30", name:"สัมมากร เพลส รามคำแหง 110", floor:"อาคารเอ ชั้น 2",
     addr:"86 ศูนย์การค้าสัมมากร เพลส รามคำแหง 110 แขวงสะพานสูง เขตสะพานสูง กทม. 10240",
     tel:["02-372-3543"], hours:"ทุกวัน 09:30–18:00", days:"ทุกวัน",
     how:"จอดที่จอดรถชั้น 3 แล้วเดินข้ามมาตึกเอ ชั้น 2 — ต้องมีรถเข็น", reg:"mall",
-    lat:13.764598, lng:100.678487, q:[400,100,80],
+    lat:13.7762585, lng:100.6734117, gmap:"https://maps.app.goo.gl/i6kQk5nxuVdQwLsq7", c:[[150,80,80,80],[40,40],[30,30]],
     tags:[["warn","จอดชั้น 3 เดินข้ามมาชั้น 2"]] },
 ];
 
 const CLOSED = [
-  { name:"กรมศิลปากร", addr:"อาคารกรมศิลปากร ถ.หน้าพระธาตุ เขตพระนคร กทม.", tel:["092 893 4518"], hours:"ทุกวัน 09:00–16:00" },
   { name:"กำแพงเพชร", addr:"—", tel:[], hours:"—" },
 ];
 
@@ -540,7 +549,17 @@ const REG = {
   office:   ["warn","อาคารสำนักงาน — ต้องลงทะเบียน"],
   hospital: ["warn","โรงพยาบาล — แลกบัตรที่ป้อม"],
   market:   ["warn","ตลาดนัด — เข็นของเข้าเอง"],
+  gov:      ["warn","หน่วยราชการ — แจ้ง รปภ. หน้าอาคาร"],
 };
+
+/* จำนวนแยกสีตามตาราง 2570: c = [สคส.[ม่วง,เหลือง,ฟ้า,แดง], สมุดเล็ก[ม่วง,ฟ้า], สมุดใหญ่[ม่วง,ครีม]] */
+const ITEMS = [
+  { name:"สคส.",     colors:["ม่วง","เหลือง","ฟ้า","แดง"] },
+  { name:"สมุดเล็ก", colors:["ม่วง","ฟ้า"] },
+  { name:"สมุดใหญ่", colors:["ม่วง","ครีม"] },
+];
+const sum = a => a.reduce((s,x) => s + x, 0);
+B.forEach(b => { b.q = b.c.map(sum); });
 
 /* ===================== HELPERS ===================== */
 const $  = s => document.querySelector(s);
@@ -550,7 +569,8 @@ const total = b => b.q[0] + b.q[1] + b.q[2];
 const dayColor = n => `var(--d${n})`;
 const dayFg    = n => `var(--d${n}-fg)`;
 const stopsOf  = n => B.filter(b => b.day === n && !b.offmap).sort((a,b) => a.seq - b.seq);
-const gmapPin  = b => `https://www.google.com/maps/search/?api=1&query=${b.lat},${b.lng}`;
+const gmapPin  = b => b.gmap || `https://www.google.com/maps/search/?api=1&query=${b.lat},${b.lng}`;
+const colorLine = (b,i) => ITEMS[i].colors.map((c,k) => `${c} ${nf(b.c[i][k])}`).join(' · ');
 const telHref  = t => 'tel:' + t.replace(/[^0-9+]/g, '');
 
 function gmapRoute(n){
@@ -570,9 +590,9 @@ function gmapRoute(n){
 
 /* ---- ติ๊กว่าส่งแล้ว (จำในเครื่อง) ---- */
 let done = {};
-try { done = JSON.parse(localStorage.getItem('phufa-done') || '{}'); } catch(e) { done = {}; }
+try { done = JSON.parse(localStorage.getItem('phufa-done-2570') || '{}'); } catch(e) { done = {}; }
 function saveDone(){
-  try { localStorage.setItem('phufa-done', JSON.stringify(done)); } catch(e) {}
+  try { localStorage.setItem('phufa-done-2570', JSON.stringify(done)); } catch(e) {}
   $('#sDone').textContent = Object.values(done).filter(Boolean).length;
 }
 
@@ -603,7 +623,9 @@ function renderPlan(){
             <div class="fact"><dt>เปิด</dt><dd>${esc(b.hours)}</dd></div>
             <div class="fact"><dt>โทร</dt><dd>${tel}</dd></div>
             <div class="fact"><dt>วิธีส่ง</dt><dd>${esc(b.how)}</dd></div>
-            <div class="fact"><dt>ของ</dt><dd class="qty">สคส. ${nf(b.q[0])} · สมุดเล็ก ${nf(b.q[1])} · สมุดใหญ่ ${nf(b.q[2])}</dd></div>
+            <div class="fact"><dt>ของ</dt><dd class="qty">${ITEMS.map((it,i) =>
+              `<div><b>${it.name} ${nf(b.q[i])}</b> — ${colorLine(b,i)}</div>`).join('')}</dd></div>
+            <div class="fact"><dt>แผนที่</dt><dd><a href="${gmapPin(b)}" target="_blank" rel="noopener">${b.gmap ? 'หมุดร้านภูฟ้าใน Google Maps' : 'หมุดตามพิกัดห้าง (ยังไม่มีหมุดร้าน)'} ↗</a></dd></div>
           </dl>
           <div class="tags">${tags}</div>
           <div class="actions">
@@ -649,6 +671,7 @@ function renderTable(){
       <td>${esc(b.floor)}</td>
       <td>${esc(b.hours)}</td>
       <td class="mono">${b.tel.map(esc).join('<br>') || '—'}</td>
+      <td style="white-space:nowrap"><a href="${gmapPin(b)}" target="_blank" rel="noopener">Google Maps ↗</a></td>
       <td class="num">${nf(b.q[0])}</td><td class="num">${nf(b.q[1])}</td>
       <td class="num">${nf(b.q[2])}</td><td class="num"><b>${nf(total(b))}</b></td>
     </tr>`).join('')
@@ -657,12 +680,14 @@ function renderTable(){
       <td class="num">${B.length + i + 1}</td>
       <td><b>${esc(c.name)}</b><br><span class="meta">${esc(c.addr)}</span></td>
       <td><span class="tag bad">ปิดปรับปรุง</span></td>
-      <td>—</td><td>${esc(c.hours)}</td><td class="mono">${c.tel.map(esc).join('') || '—'}</td>
+      <td>—</td><td>${esc(c.hours)}</td><td class="mono">${c.tel.map(esc).join('') || '—'}</td><td>—</td>
       <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><b>0</b></td>
     </tr>`).join('');
   $('#allRows').innerHTML = rows;
   $('#sBranch').textContent = B.length;
   $('#sQty').textContent = nf(B.reduce((s,b) => s + total(b), 0));
+  ['#tCard','#tSmall','#tBig'].forEach((id,i) => { $(id).textContent = nf(sum(B.map(b => b.q[i]))); });
+  $('#tAll').textContent = $('#sQty').textContent;
 }
 
 /* ===================== RENDER: MAP ===================== */
@@ -697,7 +722,7 @@ function renderMap(){
       L.marker([b.lat, b.lng], { icon, title:names }).addTo(g).bindPopup(`
         <b>${names}</b><br>
         <span style="color:${dayColor(d.n)};font-weight:600">วันที่ ${d.n} · จุดที่ ${b.seq} · ${esc(b.eta)}</span><br>
-        ${esc(b.floor)}${b.approx ? ' <em>(พิกัดโดยประมาณ)</em>' : ''}<br>
+        ${esc(b.floor)}<br>
         ${esc(b.hours)}<br>
         ${tels.map(t => `<a href="${telHref(t)}">${esc(t)}</a>`).join(' · ')}<br>
         <b>${nf(qty)}</b> ชิ้น ·
