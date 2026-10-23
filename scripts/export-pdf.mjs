@@ -21,7 +21,9 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const nf = n => n.toLocaleString('en-US');
 const sum = a => a.reduce((s,n)=>s+n,0);
 const total = b => sum(b.q);
-const nav = b => { const d = b.offmap ? B.find(x=>x.id==='sukhumvit') : b; return `https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=${d.lat},${d.lng}`; };
+const viaOf = b => B.find(x=>x.id===b.via);
+const viaName = b => viaOf(b).name.replace(/^สาขา|^โรงพยาบาล/,'');
+const nav = b => { const d = b.offmap ? viaOf(b) : b; return `https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=${d.lat},${d.lng}`; };
 const qr = JSON.parse(execFileSync(path.join(runtime, 'python/bin/python3'), ['-c', `
 import json,sys,base64
 from reportlab.graphics.barcode.qr import QrCodeWidget
@@ -48,12 +50,12 @@ try {
   const blocks = list.map((b,i)=>`${i===2 ? `<div class="continuation">เที่ยว ${d.n} · ${esc(d.label)} (ต่อ)</div>` : ""}<section class="branch">
     <div class="branch-title"><span class="box"></span><b>${b.seq}. ${esc(b.name)}</b><span class="right">${nf(total(b))} ชิ้น</span></div>
     <div class="branch-body"><div>
-      <p><b>เวลาแนะนำ ${esc(b.eta)}</b> · ${esc(b.floor)}${b.offmap ? '<br><b>ฝากที่สุขุมวิท / สำนักงาน ไม่ขับไปสาขาปลายทาง</b>' : ''}</p>
+      <p><b>เวลาแนะนำ ${esc(b.eta)}</b> · ${esc(b.floor)}${b.offmap ? `<br><b>ฝากที่${esc(viaName(b))} ไม่ขับไปสาขาปลายทาง</b>` : ''}</p>
       <p>${esc(b.addr)}</p><p><b>โทร</b> ${esc(b.tel.join(' / '))} · <b>เปิด</b> ${esc(b.hours)}</p>
       <p><b>ส่งของ / ที่จอด</b> ${esc(b.how)}</p>
       <table class="quantities"><tbody>${ITEMS.map((it,i)=>`<tr><th>${it.name}</th><td><b>${nf(b.q[i])}</b></td><td>${it.colors.map((c,k)=>`${c} ${nf(b.c[i][k])}`).join(' · ')}</td></tr>`).join('')}</tbody></table>
       <p class="signature">ส่งจริง _________ น. &nbsp; ผู้รับ / ลายเซ็น ________________________</p>
-    </div><aside><a href="${esc(nav(b))}"><img src="${qr[nav(b)]}" alt="QR นำทาง"></a><br><a href="${esc(nav(b))}">${b.offmap ? 'นำทางจุดฝากสุขุมวิท' : 'สแกนนำทาง'}</a></aside></div>
+    </div><aside><a href="${esc(nav(b))}"><img src="${qr[nav(b)]}" alt="QR นำทาง"></a><br><a href="${esc(nav(b))}">${b.offmap ? `นำทางจุดฝาก${esc(viaName(b))}` : 'สแกนนำทาง'}</a></aside></div>
    </section>`).join('');
   const content = `<!doctype html><html lang="th"><head><meta charset="utf-8"><style>
     @font-face{font-family:Thai;src:url(data:font/ttf;base64,${font.toString('base64')})}
