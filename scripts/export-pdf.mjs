@@ -43,8 +43,14 @@ await fs.mkdir(out,{recursive:true});
 const browser = await chromium.launch({channel:'chrome',headless:true});
 const page = await browser.newPage();
 const merged = await PDFDocument.create();
+const selectedDays = new Set(process.argv.slice(2).map(Number));
 try {
  for (const d of DAYS) {
+  if (selectedDays.size && !selectedDays.has(d.n)) {
+   const doc = await PDFDocument.load(await fs.readFile(path.join(out, `phufa-day-${d.n}.pdf`)));
+   for (const p of await merged.copyPages(doc, doc.getPageIndices())) merged.addPage(p);
+   continue;
+  }
   const list = B.filter(b=>b.day===d.n).sort((a,b)=>a.seq-b.seq);
   const q = ITEMS.map((_,i)=>sum(list.map(b=>b.q[i])));
   const blocks = list.map((b,i)=>`${i===2 ? `<div class="continuation">เที่ยว ${d.n} · ${esc(d.label)} (ต่อ)</div>` : ""}<section class="branch">
@@ -71,7 +77,7 @@ try {
    <p>เวลาแต่ละจุดเป็นเวลาแนะนำ ยังไม่ใช่เวลานัดยืนยัน · ลำดับตามผู้ใช้แจ้ง</p>
    <table class="summary"><tr>${ITEMS.map(it=>`<th>${it.name}</th>`).join('')}<th>รวมเที่ยวนี้</th></tr><tr>${q.map(n=>`<td>${nf(n)}</td>`).join('')}<td>${nf(sum(q))} ชิ้น</td></tr></table>
    <div class="note">${esc(d.note)}</div>${blocks}
-   <footer>จำนวน: ร่างตารางสิ่งพิมพ์ 2570.xls · สคส / สมุดเล่มเล็ก / สมุดเล่มใหญ่ · ตรวจครบ 15,000 ชิ้น<br>วัน ลำดับ ชั้น เวลารับของ และที่จอด: ผู้ใช้ 19 ต.ค. 2569 · โทร/เวลาเปิด: <a href="https://www.phufa.org/branch-all/">phufa.org/branch-all</a> · วิธีเข้ารับสินค้าต้องโทรยืนยัน<br>แผนที่และ PDF ล่าสุด: <a href="https://hellopae.github.io/PhufaRoute/">hellopae.github.io/PhufaRoute</a> · ยืนยันวันส่งตามชื่อวัน: 21 / 22 / 24 / 26 / 27 ต.ค. 2569</footer>
+   <footer>จำนวน: ร่างตารางสิ่งพิมพ์ 2570.xls · สคส / สมุดเล่มเล็ก / สมุดเล่มใหญ่ · ตรวจครบ 15,000 ชิ้น<br>วัน ลำดับ ชั้น เวลารับของ และที่จอด: ผู้ใช้ 19 และ 27 ต.ค. 2569 · โทร/เวลาเปิด: <a href="https://www.phufa.org/branch-all/">phufa.org/branch-all</a> · วิธีเข้ารับสินค้าต้องโทรยืนยัน<br>แผนที่และ PDF ล่าสุด: <a href="https://hellopae.github.io/PhufaRoute/">hellopae.github.io/PhufaRoute</a> · ยืนยันวันส่งตามชื่อวัน: 21 / 22 / 24 / 26 / 27 ต.ค. 2569</footer>
    </body></html>`;
   await page.setContent(content,{waitUntil:'load'});
   await page.evaluate(()=>document.fonts.ready);
